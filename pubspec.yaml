@@ -38,6 +38,7 @@ dev_dependencies:
   json_serializable:
   flutter_inappwebview: ^4.0.0+4
   receive_sharing_intent: ^1.4.2
+  html: ^0.14.0+4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
