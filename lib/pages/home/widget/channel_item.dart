@@ -1,4 +1,3 @@
-import 'package:TodayYoutuber/models/channel.dart';
 import 'package:TodayYoutuber/pages/home/home_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
