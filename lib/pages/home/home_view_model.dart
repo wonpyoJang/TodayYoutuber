@@ -8,7 +8,7 @@ class HomeViewModel extends ChangeNotifier {
       image:
           "https://yt3.ggpht.com/ytc/AAUvwnhZKDZBlIH-AAMyl6Jxit6MdKcqx7a68VDT5mwR=s88-c-k-c0x00ffffff-no-rj",
       link: "https://www.youtube.com/channel/UCxZ2AlaT0hOmxzZVbF_j_Sw/featured",
-      subscribers: "1280",
+      subscribers: "구독자 1280 명",
     )
   ];
 
