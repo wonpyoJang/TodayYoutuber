@@ -5,8 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "TodayYoutuber",
+            "name": "debug",
             "request": "launch",
+            "flutterMode": "debug",
+            "type": "dart"
+        },
+        {
+            "name": "relese",
+            "request": "launch",
+            "flutterMode": "release",
             "type": "dart"
         }
     ]
