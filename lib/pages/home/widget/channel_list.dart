@@ -16,7 +16,7 @@ class ChannelList extends StatelessWidget {
     print("[build] channelList");
     final vm = Provider.of<HomeViewModel>(context);
     return ListView.separated(
-      itemCount: vm.getLengthOfChannels(0),
+      itemCount: vm.getLengthOfChannels(categoryIndex),
       separatorBuilder: (context, index) {
         return Container(height: 1.0, color: Colors.grey);
       },

@@ -9,8 +9,7 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   TabController _tabController;
 
   void initState() {
@@ -64,7 +63,19 @@ class _HomeScreenState extends State<HomeScreen>
             final index = _homeViewModel.categories.indexOf(category);
             return ChannelList(categoryIndex: index);
           }),
-          Center(child: Text("+ 추가하기")),
+          Center(
+              child: InkWell(
+                  onTap: () {
+                    _homeViewModel.addEmptyCategory();
+
+                    setState(() {
+                      _tabController = new TabController(
+                          vsync: this,
+                          length: _homeViewModel.categories.length + 1);
+                    });
+                  },
+                  child: Container(
+                      width: 100, height: 100, child: Text("+ 추가하기")))),
         ],
       ),
     );

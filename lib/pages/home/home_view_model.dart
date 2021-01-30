@@ -56,6 +56,13 @@ class HomeViewModel extends ChangeNotifier {
   }
 
   // * 카테고리
+  void addCategory(Category newCategory) {
+    categories.add(newCategory);
+  }
+
+  void addEmptyCategory() {
+    addCategory(Category(title: "새카테고리", channels: []));
+  }
 
   // * 채널
   List<Channel> getChannels(int categoryIndex) =>

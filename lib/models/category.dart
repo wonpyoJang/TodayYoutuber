@@ -15,7 +15,7 @@ class Category {
   }) {
     print("[create Instance] Category : ${toString()}");
     assert(title != null && title.isNotEmpty);
-    assert(channels != null && channels.isNotEmpty);
+    assert(channels != null);
   }
 
   void addChannel(Channel channel) {
