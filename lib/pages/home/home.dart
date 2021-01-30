@@ -1,8 +1,8 @@
-import 'dart:async';
+import 'package:TodayYoutuber/pages/home/home_view_model.dart';
 import 'package:TodayYoutuber/pages/home/widget/bottom_sheet_for_adding_channel.dart';
 import 'package:TodayYoutuber/pages/home/widget/channel_list.dart';
 import 'package:flutter/material.dart';
-import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -10,34 +10,21 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  StreamSubscription _intentDataStreamSubscription;
-  String _sharedText;
-  @override
   void initState() {
     super.initState();
-
-    // For sharing or opening urls/text coming from outside the app while the app is in the memory
-    _intentDataStreamSubscription =
-        ReceiveSharingIntent.getTextStream().listen((String value) {
-      if (value == null && value.isEmpty) return;
-
-      showModalBttomShsetForAddingChannel(context, value);
-    }, onError: (err) {
-      print("getLinkStream error: $err");
-    });
-
-    // For sharing or opening urls/text coming from outside the app while the app is closed
-    ReceiveSharingIntent.getInitialText().then((String value) {
-      if (value == null && value.isEmpty) return;
-
-      showModalBttomShsetForAddingChannel(context, value);
+    HomeViewModel _homeViewModel =
+        Provider.of<HomeViewModel>(context, listen: false);
+    _homeViewModel.subscribeSharingIntent((url) {
+      showModalBttomShsetForAddingChannel(context, url);
     });
   }
 
   @override
   void dispose() {
     super.dispose();
-    _intentDataStreamSubscription.cancel();
+    HomeViewModel _homeViewModel =
+        Provider.of<HomeViewModel>(context, listen: false);
+    _homeViewModel.unsubscribeSharingIntent();
   }
 
   @override
