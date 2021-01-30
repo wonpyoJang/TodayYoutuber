@@ -74,16 +74,19 @@ class WebviewScreen extends StatefulWidget {
 class _WebviewScreenState extends State<WebviewScreen> {
   @override
   void initState() {
+    print("[build] initState");
     super.initState();
   }
 
   @override
   void dispose() {
+    print("[build] dispose");
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    print("[build] WebviewScreen");
     return Scaffold(
         appBar: AppBar(
             title: Text(

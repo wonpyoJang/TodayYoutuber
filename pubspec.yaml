@@ -39,6 +39,7 @@ dev_dependencies:
   flutter_inappwebview: ^4.0.0+4
   receive_sharing_intent: ^1.4.2
   html: ^0.14.0+4
+  fab_circular_menu: ^1.0.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

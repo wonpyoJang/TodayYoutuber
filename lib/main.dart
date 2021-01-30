@@ -15,6 +15,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
+    print("[build] MyApp");
     return ChangeNotifierProvider(
       create: (context) => HomeViewModel(),
       child: MaterialApp(

@@ -60,7 +60,7 @@ class _AddButton extends StatelessWidget {
     final vm = Provider.of<HomeViewModel>(context);
     return GestureDetector(
         onTap: () {
-          vm.addChannel(parsedChannel);
+          vm.addChannel(0, parsedChannel);
           Navigator.of(context).pop();
         },
         child: Container(
