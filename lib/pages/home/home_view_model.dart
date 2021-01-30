@@ -4,6 +4,7 @@ import 'package:TodayYoutuber/models/category.dart';
 import 'package:TodayYoutuber/models/channel.dart';
 import 'package:flutter/material.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+import 'package:TodayYoutuber/main.dart';
 
 class HomeViewModel extends ChangeNotifier {
   List<Category> categories = [
@@ -40,7 +41,7 @@ class HomeViewModel extends ChangeNotifier {
 
       onReceiveSharingIntent(value);
     }, onError: (err) {
-      print("getLinkStream error: $err");
+      logger.d("getLinkStream error: $err");
     });
 
     // For sharing or opening urls/text coming from outside the app while the app is closed

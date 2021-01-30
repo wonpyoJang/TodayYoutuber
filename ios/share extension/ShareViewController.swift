@@ -41,7 +41,7 @@ class ShareViewController: SLComposeServiceViewController {
     }
 
     override func didSelectPost() {
-        print("didSelectPost");
+        logger.d("didSelectPost");
     }
 
     override func configurationItems() -> [Any]! {
@@ -181,7 +181,7 @@ class ShareViewController: SLComposeServiceViewController {
     }
 
     private func dismissWithError() {
-        print("[ERROR] Error loading data!")
+        logger.d("[ERROR] Error loading data!")
         let alert = UIAlertController(title: "Error", message: "Error loading data", preferredStyle: .alert)
 
         let action = UIAlertAction(title: "Error", style: .cancel) { _ in
@@ -250,7 +250,7 @@ class ShareViewController: SLComposeServiceViewController {
             }
             try FileManager.default.copyItem(at: srcURL, to: dstURL)
         } catch (let error) {
-            print("Cannot copy item at \(srcURL) to \(dstURL): \(error)")
+            logger.d("Cannot copy item at \(srcURL) to \(dstURL): \(error)")
             return false
         }
         return true
@@ -306,7 +306,7 @@ class ShareViewController: SLComposeServiceViewController {
 
         // Debug method to print out SharedMediaFile details in the console
         func toString() {
-            print("[SharedMediaFile] \n\tpath: \(self.path)\n\tthumbnail: \(self.thumbnail)\n\tduration: \(self.duration)\n\ttype: \(self.type)")
+            logger.d("[SharedMediaFile] \n\tpath: \(self.path)\n\tthumbnail: \(self.thumbnail)\n\tduration: \(self.duration)\n\ttype: \(self.type)")
         }
     }
 

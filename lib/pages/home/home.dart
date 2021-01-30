@@ -5,6 +5,7 @@ import 'package:TodayYoutuber/pages/home/widget/channel_list.dart';
 import 'package:TodayYoutuber/pages/home/widget/text_field_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:TodayYoutuber/main.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -15,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   TabController _tabController;
 
   void initState() {
-    print("[initState] HomeScreen");
+    logger.d("[initState] HomeScreen");
     super.initState();
     HomeViewModel _homeViewModel =
         Provider.of<HomeViewModel>(context, listen: false);
@@ -30,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    print("[dispse] HomeScreen");
+    logger.d("[dispse] HomeScreen");
     super.dispose();
     HomeViewModel _homeViewModel =
         Provider.of<HomeViewModel>(context, listen: false);
@@ -39,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    print("[build] HomeScreen");
+    logger.d("[build] HomeScreen");
 
     HomeViewModel _homeViewModel =
         Provider.of<HomeViewModel>(context, listen: false);

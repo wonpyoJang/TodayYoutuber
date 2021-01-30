@@ -3,6 +3,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'package:TodayYoutuber/common/my_in_app_browser.dart';
+import 'package:TodayYoutuber/main.dart';
 
 part 'channel.g.dart';
 
@@ -23,7 +24,7 @@ class Channel {
     this.likes = 0,
     this.isLike = false,
   }) {
-    print("[create Instance] Channel : ${toString()}");
+    logger.d("[create Instance] Channel : ${toString()}");
     assert(name != null && name.isNotEmpty);
     assert(image != null && image.isNotEmpty);
     assert(link != null && link.isNotEmpty);

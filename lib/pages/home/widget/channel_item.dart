@@ -1,6 +1,7 @@
 import 'package:TodayYoutuber/pages/home/home_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:TodayYoutuber/main.dart';
 
 class ChannelItem extends StatelessWidget {
   const ChannelItem({
@@ -14,7 +15,7 @@ class ChannelItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("[build] ChannelItem");
+    logger.d("[build] ChannelItem");
     assert(channelIndex != null && channelIndex >= 0);
 
     final vm = Provider.of<HomeViewModel>(context);
@@ -68,7 +69,7 @@ class _LikeButton extends StatelessWidget {
 
     return GestureDetector(
         onTap: () {
-          print("[touch event] like button");
+          logger.d("[touch event] like button");
           vm.toggleLike(0, channelIndex);
         },
         child: Container(

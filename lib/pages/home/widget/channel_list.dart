@@ -2,6 +2,7 @@ import 'package:TodayYoutuber/pages/home/home_view_model.dart';
 import 'package:TodayYoutuber/pages/home/widget/channel_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:TodayYoutuber/main.dart';
 
 class CategoryView extends StatelessWidget {
   final int categoryIndex;
@@ -13,7 +14,7 @@ class CategoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("[build] channelList");
+    logger.d("[build] channelList");
     final vm = Provider.of<HomeViewModel>(context);
     return ListView.separated(
       itemCount: vm.getLengthOfChannels(categoryIndex),
