@@ -1,19 +1,6 @@
-# TodayYoutuber
+# TodayYoutuber(Tube Shaker)
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+서로간에 유튜브 채널 목록을 공유할 수 있는 앱입니다.
 
 ### 1. 빌드 방법
 
@@ -21,11 +8,12 @@ samples, guidance on mobile development, and a full API reference.
    git clone https://github.com/wonpyoJang/TodayYoutuber.git
    cd TodayYoutuber
    flutter pub get
-   flutter pub run build_runner build --delete--conflicting-outputs
+   flutter pub run build_runner build --delete-conflicting-outputs
    flutter run --release
 ```
 
 ### 2. 개발자 개발 환경
+
 ```bash
 ~/workplace/study/stard/TodayYoutuber dev
 ❯ flutter doctor -v
@@ -60,8 +48,8 @@ samples, guidance on mobile development, and a full API reference.
     • VS Code at /Applications/Visual Studio Code.app/Contents
     • Flutter extension version 3.18.1
 
- 
-[✓] Connected device (1 available)            
+
+[✓] Connected device (1 available)
     • sdk gphone x86 (mobile) • emulator-5554 • android-x86 • Android 11 (API 30) (emulator)
 
 ! Doctor found issues in 1 category.
