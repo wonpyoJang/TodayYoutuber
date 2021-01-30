@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:TodayYoutuber/models/channel.dart';
 import 'package:flutter/material.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 class HomeViewModel extends ChangeNotifier {
   List<Channel> _channels = [
@@ -11,6 +14,31 @@ class HomeViewModel extends ChangeNotifier {
       subscribers: "구독자 1280 명",
     )
   ];
+
+  StreamSubscription _intentDataStreamSubscription;
+
+  void subscribeSharingIntent(Function onReceiveSharingIntent) {
+    // For sharing or opening urls/text coming from outside the app while the app is in the memory
+    _intentDataStreamSubscription =
+        ReceiveSharingIntent.getTextStream().listen((String value) {
+      if (value == null && value.isEmpty) return;
+
+      onReceiveSharingIntent(value);
+    }, onError: (err) {
+      print("getLinkStream error: $err");
+    });
+
+    // For sharing or opening urls/text coming from outside the app while the app is closed
+    ReceiveSharingIntent.getInitialText().then((String value) {
+      if (value == null && value.isEmpty) return;
+
+      onReceiveSharingIntent(value);
+    });
+  }
+
+  void unsubscribeSharingIntent() {
+    _intentDataStreamSubscription.cancel();
+  }
 
   List<Channel> get channels => _channels;
   int get lengthOfChannels => _channels.length;
