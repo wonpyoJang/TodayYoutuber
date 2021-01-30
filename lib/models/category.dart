@@ -5,7 +5,6 @@ import 'package:TodayYoutuber/main.dart';
 
 part 'category.g.dart';
 
-
 @JsonSerializable(nullable: true)
 class Category {
   String title;
