@@ -5,9 +5,11 @@ import 'package:provider/provider.dart';
 class ChannelItem extends StatelessWidget {
   const ChannelItem({
     Key key,
+    @required this.categoryIndex,
     @required this.channelIndex,
   }) : super(key: key);
 
+  final int categoryIndex;
   final int channelIndex;
 
   @override
@@ -16,7 +18,7 @@ class ChannelItem extends StatelessWidget {
     assert(channelIndex != null && channelIndex >= 0);
 
     final vm = Provider.of<HomeViewModel>(context);
-    final channel = vm.getChannels(0)[channelIndex];
+    final channel = vm.getChannels(categoryIndex)[channelIndex];
 
     assert(channel != null);
 
@@ -66,7 +68,7 @@ class _LikeButton extends StatelessWidget {
 
     return GestureDetector(
         onTap: () {
-          print("Home, build, like button, tappled");
+          print("[touch event] like button");
           vm.toggleLike(0, channelIndex);
         },
         child: Container(

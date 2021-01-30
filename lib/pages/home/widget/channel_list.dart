@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ChannelList extends StatelessWidget {
+  final int categoryIndex;
+
   const ChannelList({
     Key key,
+    this.categoryIndex,
   }) : super(key: key);
 
   @override
@@ -18,7 +21,7 @@ class ChannelList extends StatelessWidget {
         return Container(height: 1.0, color: Colors.grey);
       },
       itemBuilder: (BuildContext context, int index) {
-        return ChannelItem(channelIndex: index);
+        return ChannelItem(categoryIndex: categoryIndex, channelIndex: index);
       },
     );
   }
