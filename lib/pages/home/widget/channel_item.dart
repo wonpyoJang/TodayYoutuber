@@ -12,16 +12,16 @@ class ChannelItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("[build] ChannelItem");
     assert(channelIndex != null && channelIndex >= 0);
 
     final vm = Provider.of<HomeViewModel>(context);
-    final channel = vm.channels[channelIndex];
+    final channel = vm.getChannels(0)[channelIndex];
 
     assert(channel != null);
 
     return InkWell(
       onTap: () async {
-        print("HomeScreen, onTap on List");
         channel.openUrlWithInappBrowser();
       },
       child: Container(
@@ -60,14 +60,14 @@ class _LikeButton extends StatelessWidget {
     assert(channelIndex != null && channelIndex >= 0);
 
     final vm = Provider.of<HomeViewModel>(context);
-    final channel = vm.channels[channelIndex];
+    final channel = vm.getChannels(0)[channelIndex];
 
     assert(channel != null);
 
     return GestureDetector(
         onTap: () {
           print("Home, build, like button, tappled");
-          vm.toggleLike(channelIndex);
+          vm.toggleLike(0, channelIndex);
         },
         child: Container(
             child: Icon(channel.isLike
@@ -89,7 +89,7 @@ class _Body extends StatelessWidget {
     assert(channelIndex != null && channelIndex >= 0);
 
     final vm = Provider.of<HomeViewModel>(context);
-    final channel = vm.channels[channelIndex];
+    final channel = vm.getChannels(0)[channelIndex];
 
     assert(channel != null);
 
@@ -116,7 +116,7 @@ class _ThumbNail extends StatelessWidget {
     assert(channelIndex != null && channelIndex >= 0);
 
     final vm = Provider.of<HomeViewModel>(context);
-    final channel = vm.channels[channelIndex];
+    final channel = vm.getChannels(0)[channelIndex];
 
     assert(vm != null);
     assert(channel != null);

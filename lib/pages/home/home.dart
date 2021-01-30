@@ -11,6 +11,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   void initState() {
+    print("[initState] HomeScreen");
     super.initState();
     HomeViewModel _homeViewModel =
         Provider.of<HomeViewModel>(context, listen: false);
@@ -21,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    print("[dispse] HomeScreen");
     super.dispose();
     HomeViewModel _homeViewModel =
         Provider.of<HomeViewModel>(context, listen: false);
@@ -29,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("[build] HomeScreen");
     return Scaffold(
       body: ChannelList(),
     );

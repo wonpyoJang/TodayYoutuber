@@ -10,9 +10,10 @@ class ChannelList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("[build] channelList");
     final vm = Provider.of<HomeViewModel>(context);
     return ListView.separated(
-      itemCount: vm.lengthOfChannels,
+      itemCount: vm.getLengthOfChannels(0),
       separatorBuilder: (context, index) {
         return Container(height: 1.0, color: Colors.grey);
       },
