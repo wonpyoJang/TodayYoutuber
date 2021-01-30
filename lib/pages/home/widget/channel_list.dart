@@ -3,10 +3,10 @@ import 'package:TodayYoutuber/pages/home/widget/channel_item.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ChannelList extends StatelessWidget {
+class CategoryView extends StatelessWidget {
   final int categoryIndex;
 
-  const ChannelList({
+  const CategoryView({
     Key key,
     this.categoryIndex,
   }) : super(key: key);

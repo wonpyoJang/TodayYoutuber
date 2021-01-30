@@ -6,7 +6,7 @@ part 'category.g.dart';
 
 @JsonSerializable(nullable: true)
 class Category {
-  final String title;
+  String title;
   final List<Channel> channels;
 
   Category({
@@ -16,6 +16,10 @@ class Category {
     print("[create Instance] Category : ${toString()}");
     assert(title != null && title.isNotEmpty);
     assert(channels != null);
+  }
+
+  void setTitle(String newTitle) {
+    this.title = newTitle;
   }
 
   void addChannel(Channel channel) {
