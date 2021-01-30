@@ -3,6 +3,7 @@ import 'package:TodayYoutuber/pages/home/home_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:TodayYoutuber/main.dart';
 
 void showModalBttomShsetForAddingChannel(
     BuildContext context, String value) async {
@@ -153,7 +154,7 @@ String _parseBetweenPivots(String html, {String pivot1, String pivot2}) {
 
   html = html.substring(html.indexOf(pivot1) + pivot1.length);
   html = html.substring(0, html.indexOf(pivot2));
-  print("parse result: " + html);
+  logger.d("parse result: " + html);
 
   assert(html != null && html.isNotEmpty);
 

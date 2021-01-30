@@ -1,8 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import 'package:TodayYoutuber/models/channel.dart';
+import 'package:TodayYoutuber/main.dart';
 
 part 'category.g.dart';
+
 
 @JsonSerializable(nullable: true)
 class Category {
@@ -13,7 +15,7 @@ class Category {
     this.title,
     this.channels,
   }) {
-    print("[create Instance] Category : ${toString()}");
+    logger.d("[create Instance] Category : ${toString()}");
     assert(title != null && title.isNotEmpty);
     assert(channels != null);
   }

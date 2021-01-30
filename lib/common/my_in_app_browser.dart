@@ -1,47 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:TodayYoutuber/main.dart';
 
 class MyInAppBrowser extends InAppBrowser {
   @override
   Future onBrowserCreated() async {
-    print("\n\nBrowser Created!\n\n");
+    logger.d("\n\nBrowser Created!\n\n");
   }
 
   @override
   Future onLoadStart(String url) async {
-    print("\n\nStarted $url\n\n");
+    logger.d("\n\nStarted $url\n\n");
   }
 
   @override
   Future onLoadStop(String url) async {
-    print("\n\nStopped $url\n\n");
+    logger.d("\n\nStopped $url\n\n");
   }
 
   @override
   void onLoadError(String url, int code, String message) {
-    print("Can't load $url.. Error: $message");
+    logger.d("Can't load $url.. Error: $message");
   }
 
   @override
   void onProgressChanged(int progress) {
-    print("Progress: $progress");
+    logger.d("Progress: $progress");
   }
 
   @override
   void onExit() {
-    print("\n\nBrowser closed!\n\n");
+    logger.d("\n\nBrowser closed!\n\n");
   }
 
   @override
   Future<ShouldOverrideUrlLoadingAction> shouldOverrideUrlLoading(
       ShouldOverrideUrlLoadingRequest shouldOverrideUrlLoadingRequest) async {
-    print("\n\nOverride ${shouldOverrideUrlLoadingRequest.url}\n\n");
+    logger.d("\n\nOverride ${shouldOverrideUrlLoadingRequest.url}\n\n");
     return ShouldOverrideUrlLoadingAction.ALLOW;
   }
 
   @override
   void onLoadResource(LoadedResource response) {
-    print("Started at: " +
+    logger.d("Started at: " +
         response.startTime.toString() +
         "ms ---> duration: " +
         response.duration.toString() +
@@ -51,7 +52,7 @@ class MyInAppBrowser extends InAppBrowser {
 
   @override
   void onConsoleMessage(ConsoleMessage consoleMessage) {
-    print("""
+    logger.d("""
     console output:
       message: ${consoleMessage.message}
       messageLevel: ${consoleMessage.messageLevel.toValue()}
@@ -74,19 +75,19 @@ class WebviewScreen extends StatefulWidget {
 class _WebviewScreenState extends State<WebviewScreen> {
   @override
   void initState() {
-    print("[build] initState");
+    logger.d("[build] initState");
     super.initState();
   }
 
   @override
   void dispose() {
-    print("[build] dispose");
+    logger.d("[build] dispose");
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    print("[build] WebviewScreen");
+    logger.d("[build] WebviewScreen");
     return Scaffold(
         appBar: AppBar(
             title: Text(
