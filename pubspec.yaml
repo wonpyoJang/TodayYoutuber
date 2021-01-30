@@ -34,8 +34,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner:
-  json_serializable:
+  build_runner: 
+  json_serializable: 
   flutter_inappwebview: ^4.0.0+4
   receive_sharing_intent: ^1.4.2
   html: ^0.14.0+4

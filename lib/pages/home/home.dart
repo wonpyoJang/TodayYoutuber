@@ -19,10 +19,8 @@ class _HomeScreenState extends State<HomeScreen> {
     // For sharing or opening urls/text coming from outside the app while the app is in the memory
     _intentDataStreamSubscription =
         ReceiveSharingIntent.getTextStream().listen((String value) {
-      setState(() {
-        _sharedText = value;
-        print("Shared: $_sharedText");
-      });
+      if (value == null && value.isEmpty) return;
+
       showModalBttomShsetForAddingChannel(context, value);
     }, onError: (err) {
       print("getLinkStream error: $err");
@@ -30,10 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // For sharing or opening urls/text coming from outside the app while the app is closed
     ReceiveSharingIntent.getInitialText().then((String value) {
-      setState(() {
-        _sharedText = value;
-        print("Shared: $_sharedText");
-      });
+      if (value == null && value.isEmpty) return;
+
       showModalBttomShsetForAddingChannel(context, value);
     });
   }
@@ -47,12 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // todo: 아래 추석은 곧 구현 예정
-      // floatingActionButton: FloatingActionButton(
-      //     onPressed: () {
-      //       print("HomeScreen, onPressed in FAB Add");
-      //     },
-      //     child: Icon(Icons.add)),
       body: ChannelList(),
     );
   }
