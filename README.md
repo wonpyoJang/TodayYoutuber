@@ -102,6 +102,9 @@ View Model : View를 표현하기 위해 만든 View를 위한 Model입니다. V
 ## Special Thanks to
 
 Aqudi : 해당 프로젝트에 사용된 Logger 라이브러리를 알려주셨습니다.
+
 edhjs : README 파일의 형식을 잡아주셨습니다.
+
 deviankim : 이 프로젝트가 수행된 스터디를 리딩해 주셨습니다.
+
 스타디 flutter 5기(중급반) : 인사이트를 공유해 주셨습니다.
