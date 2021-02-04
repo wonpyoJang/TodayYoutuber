@@ -20,12 +20,28 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     super.initState();
     HomeViewModel _homeViewModel =
         Provider.of<HomeViewModel>(context, listen: false);
+    /* _homeViewModel.subscribeSharingIntent((url) {
+      
+      showModalBttomShsetForAddingChannel(context, url);
+    }); */
+    urlReceivedEvent.stream.listen((url) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        showModalBttomShsetForAddingChannel(context, url);
+      });
+    });
+    _homeViewModel.getUrlWhenStartedBySharingIntent((url) {
+      showModalBttomShsetForAddingChannel(context, url);
+    });
+
     _tabController = TabController(
         length: _homeViewModel.categories.length + 1,
         vsync: this,
         initialIndex: 0);
-    _homeViewModel.subscribeSharingIntent((url) {
-      showModalBttomShsetForAddingChannel(context, url);
+
+    _homeViewModel.getCategoriesFromDB().then((_) {
+      _tabController = TabController(
+          vsync: this, length: _homeViewModel.categories.length + 1);
+      setState(() {});
     });
   }
 
@@ -33,9 +49,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void dispose() {
     logger.d("[dispse] HomeScreen");
     super.dispose();
-    HomeViewModel _homeViewModel =
-        Provider.of<HomeViewModel>(context, listen: false);
-    _homeViewModel.unsubscribeSharingIntent();
   }
 
   @override
