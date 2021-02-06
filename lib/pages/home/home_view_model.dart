@@ -63,7 +63,7 @@ class HomeViewModel extends ChangeNotifier {
     for (var i = 0; i < results.length; ++i) {
       var channel = results[i];
 
-      mCategory.categoryHashMap[results[i].id].add(mChannel.Channel(
+      mCategory.categoryHashMap[results[i].categoryId].add(mChannel.Channel(
           id: channel.id,
           name: channel.name,
           image: channel.image,

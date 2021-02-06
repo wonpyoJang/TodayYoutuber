@@ -20,10 +20,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     super.initState();
     HomeViewModel _homeViewModel =
         Provider.of<HomeViewModel>(context, listen: false);
-    /* _homeViewModel.subscribeSharingIntent((url) {
-      
-      showModalBttomShsetForAddingChannel(context, url);
-    }); */
+
     urlReceivedEvent.stream.listen((url) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         showModalBttomShsetForAddingChannel(context, url);
@@ -38,11 +35,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         vsync: this,
         initialIndex: 0);
 
-    _homeViewModel.getCategoriesFromDB().then((_) {
-      _tabController = TabController(
-          vsync: this, length: _homeViewModel.categories.length + 1);
-      setState(() {});
-    });
+    getDatasFromDB(context);
+  }
+
+  void getDatasFromDB(BuildContext context) async {
+    HomeViewModel _homeViewModel =
+        Provider.of<HomeViewModel>(context, listen: false);
+
+    await _homeViewModel.getCategoriesFromDB();
+    await _homeViewModel.getChannelsFromDB();
+
+    _tabController = TabController(
+        vsync: this, length: _homeViewModel.categories.length + 1);
+
+    setState(() {});
   }
 
   @override
