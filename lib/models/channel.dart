@@ -4,26 +4,30 @@ import 'package:json_annotation/json_annotation.dart';
 
 import 'package:TodayYoutuber/common/my_in_app_browser.dart';
 import 'package:TodayYoutuber/main.dart';
+import 'package:TodayYoutuber/database/database.dart' as db;
 
 part 'channel.g.dart';
 
 @JsonSerializable(nullable: true)
 class Channel {
+  int id;
   final String name;
   final String image;
   final String link;
   final String subscribers;
   int likes;
   bool isLike;
+  int categoryId;
 
-  Channel({
-    @required this.name,
-    @required this.image,
-    @required this.link,
-    @required this.subscribers,
-    this.likes = 0,
-    this.isLike = false,
-  }) {
+  Channel(
+      {this.id,
+      @required this.name,
+      @required this.image,
+      @required this.link,
+      @required this.subscribers,
+      this.likes = 0,
+      this.isLike = false,
+      this.categoryId}) {
     logger.d("[create Instance] Channel : ${toString()}");
     assert(name != null && name.isNotEmpty);
     assert(image != null && image.isNotEmpty);
@@ -31,6 +35,22 @@ class Channel {
     assert(subscribers != null && subscribers.isNotEmpty);
     assert(likes != null && likes >= 0);
     assert(isLike != null);
+  }
+
+  db.Channel toDbModel() {
+    return db.Channel(
+        id: id,
+        name: name,
+        image: image,
+        link: link,
+        subscribers: subscribers,
+        likes: likes,
+        isLike: isLike,
+        categoryId: categoryId);
+  }
+
+  void setId(int id) {
+    this.id = id;
   }
 
   bool setLike() => this.isLike = true;

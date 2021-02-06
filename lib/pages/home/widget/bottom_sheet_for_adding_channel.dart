@@ -1,3 +1,4 @@
+import 'package:TodayYoutuber/common/dialogs.dart';
 import 'package:TodayYoutuber/models/channel.dart';
 import 'package:TodayYoutuber/pages/home/home_view_model.dart';
 import 'package:flutter/material.dart';
@@ -58,10 +59,20 @@ class _AddButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final vm = Provider.of<HomeViewModel>(context);
+    final _homeViewModel = Provider.of<HomeViewModel>(context);
     return GestureDetector(
-        onTap: () {
-          vm.addChannel(0, parsedChannel);
+        onTap: () async {
+          DBAccessResult result =
+              await _homeViewModel.addChannel(0, parsedChannel);
+
+          if (result == DBAccessResult.DUPLICATED_CHANNEL) {
+            await showDuplicatedChannelDailog(context);
+            return;
+          } else if (result == DBAccessResult.FAIL) {
+            await showDBConnectionFailDailog(context);
+            return;
+          }
+
           Navigator.of(context).pop();
         },
         child: Container(
