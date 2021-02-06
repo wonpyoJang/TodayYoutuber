@@ -213,6 +213,34 @@ class HomeViewModel extends ChangeNotifier {
     return DBAccessResult.SUCCESS;
   }
 
+  Future<DBAccessResult> deleteChannel(
+      int categoryIndex, mChannel.Channel channel) async {
+    assert(channel != null);
+    assert(categoryIndex != null && categoryIndex <= categories.length);
+
+    try {
+      // autoIncrement 필드 이므로 int 불필요.
+      // ignore: missing_required_param
+      await database.deleteChannel(db.Channel(
+          id: channel.id,
+          name: channel.name,
+          image: channel.image,
+          link: channel.link,
+          subscribers: channel.subscribers,
+          categoryId: categories[categoryIndex].id,
+          likes: channel.likes,
+          isLike: channel.isLike));
+    } catch (e) {
+      assert(false);
+      return DBAccessResult.FAIL;
+    }
+
+    mCategory.categoryHashMap[categories[categoryIndex].id].remove(channel);
+    notifyListeners();
+
+    return DBAccessResult.SUCCESS;
+  }
+
   // * 좋아요
   void setLike(int categoryIndex, int channelIndex) {
     checkNullAndRange(categoryIndex, channelIndex);

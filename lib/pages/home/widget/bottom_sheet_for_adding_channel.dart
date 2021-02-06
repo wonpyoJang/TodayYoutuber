@@ -144,7 +144,7 @@ Future<Channel> _parseChannelYoutbue(String url) async {
   String channelName =
       _parseBetweenPivots(html, pivot1: '"author":"', pivot2: '"');
   String subscribers = _parseBetweenPivots(html,
-      pivot1: '"subscriberCountText":{"runs":[{"text":"', pivot2: '"');
+      pivot1: '"subscriberCountText":{"simpleText":"', pivot2: '"},');
 
   assert(thumbnailLink != null && thumbnailLink.isNotEmpty);
   assert(channelName != null && channelName.isNotEmpty);

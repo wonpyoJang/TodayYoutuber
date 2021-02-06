@@ -68,27 +68,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget buildBody(BuildContext context) {
-    HomeViewModel _homeViewModel =
-        Provider.of<HomeViewModel>(context, listen: false);
-    List<Category> categories = _homeViewModel.categories;
-
-    return TabBarView(
-      controller: _tabController,
-      children: [
-        ...categories.map((category) {
-          final index = categories.indexOf(category);
-          return CategoryView(categoryIndex: index);
-        }),
-        Center(
-            child: InkWell(
-                onTap: () => addNewCategory(context),
-                child:
-                    Container(width: 100, height: 100, child: Text("+ 추가하기")))),
-      ],
-    );
-  }
-
   Widget bildAppBar(BuildContext context) {
     HomeViewModel _homeViewModel =
         Provider.of<HomeViewModel>(context, listen: false);
@@ -97,6 +76,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return AppBar(
       bottom: TabBar(
         controller: _tabController,
+        isScrollable: true,
         tabs: [
           ...categories.map((category) {
             final categoryIndex = categories.indexOf(category);
@@ -131,12 +111,38 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+  Widget buildBody(BuildContext context) {
+    HomeViewModel _homeViewModel =
+        Provider.of<HomeViewModel>(context, listen: false);
+    List<Category> categories = _homeViewModel.categories;
+
+    return TabBarView(
+      controller: _tabController,
+      physics: NeverScrollableScrollPhysics(),
+      children: [
+        ...categories.map((category) {
+          final index = categories.indexOf(category);
+          return CategoryView(categoryIndex: index);
+        }),
+        Center(
+            child: InkWell(
+                onTap: () => addNewCategory(context),
+                child:
+                    Container(width: 100, height: 100, child: Text("+ 추가하기")))),
+      ],
+    );
+  }
+
   Future<void> addNewCategory(BuildContext context) async {
     HomeViewModel _homeViewModel =
         Provider.of<HomeViewModel>(context, listen: false);
     List<Category> categories = _homeViewModel.categories;
 
     String newCategoryTitle = await showTextFieldDialog(context);
+
+    if (newCategoryTitle == null) {
+      return;
+    }
 
     DBAccessResult result = await _homeViewModel
         .addCategory(Category(title: newCategoryTitle, channels: []));

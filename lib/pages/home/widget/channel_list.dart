@@ -15,9 +15,9 @@ class CategoryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     logger.d("[build] channelList");
-    final vm = Provider.of<HomeViewModel>(context);
+    final _homeViewModel = Provider.of<HomeViewModel>(context);
     return ListView.separated(
-      itemCount: vm.getLengthOfChannels(categoryIndex),
+      itemCount: _homeViewModel.getLengthOfChannels(categoryIndex),
       separatorBuilder: (context, index) {
         return Container(height: 1.0, color: Colors.grey);
       },
