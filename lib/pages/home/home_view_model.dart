@@ -12,28 +12,7 @@ import 'package:sqlite3/src/api/exception.dart';
 enum DBAccessResult { SUCCESS, DUPLICATED_CATEGORY, DUPLICATED_CHANNEL, FAIL }
 
 class HomeViewModel extends ChangeNotifier {
-  List<mCategory.Category> categories = [
-    mCategory.Category(id: 99999999, title: "플러터", channels: [
-      mChannel.Channel(
-          name: "코드팩토리",
-          image:
-              "https://yt3.ggpht.com/ytc/AAUvwnhZKDZBlIH-AAMyl6Jxit6MdKcqx7a68VDT5mwR=s88-c-k-c0x00ffffff-no-rj",
-          link:
-              "https://www.youtube.com/channel/UCxZ2AlaT0hOmxzZVbF_j_Sw/featured",
-          subscribers: "구독자 1280 명",
-          categoryId: 99999999)
-    ]),
-    mCategory.Category(id: 99999, title: "리액트", channels: [
-      mChannel.Channel(
-          name: "코드팩토리",
-          image:
-              "https://yt3.ggpht.com/ytc/AAUvwnhZKDZBlIH-AAMyl6Jxit6MdKcqx7a68VDT5mwR=s88-c-k-c0x00ffffff-no-rj",
-          link:
-              "https://www.youtube.com/channel/UCxZ2AlaT0hOmxzZVbF_j_Sw/featured",
-          subscribers: "구독자 1280 명",
-          categoryId: 99999)
-    ])
-  ];
+  List<mCategory.Category> categories = [];
 
   void getUrlWhenStartedBySharingIntent(Function onReceiveSharingIntent) {
     ReceiveSharingIntent.getInitialText().then((String value) {
@@ -115,6 +94,26 @@ class HomeViewModel extends ChangeNotifier {
     }
 
     categories.add(newCategory);
+
+    notifyListeners();
+    return DBAccessResult.SUCCESS;
+  }
+
+  // * 카테고리
+  Future<DBAccessResult> deleteCategory(mCategory.Category category) async {
+    assert(category != null, category.title != null);
+
+    try {
+      // id 는 auto increment이므로 필수가 아님.
+      // ignore: missing_required_param
+      await database
+          .deleteCategory(db.Category(id: category.id, title: category.title));
+    } catch (e) {
+      assert(false);
+      return DBAccessResult.FAIL;
+    }
+
+    categories.remove(category);
 
     notifyListeners();
     return DBAccessResult.SUCCESS;
@@ -208,6 +207,34 @@ class HomeViewModel extends ChangeNotifier {
     channel.setId(newChannelId);
 
     mCategory.categoryHashMap[categories[categoryIndex].id].add(channel);
+    notifyListeners();
+
+    return DBAccessResult.SUCCESS;
+  }
+
+  Future<DBAccessResult> deleteChannel(
+      int categoryIndex, mChannel.Channel channel) async {
+    assert(channel != null);
+    assert(categoryIndex != null && categoryIndex <= categories.length);
+
+    try {
+      // autoIncrement 필드 이므로 int 불필요.
+      // ignore: missing_required_param
+      await database.deleteChannel(db.Channel(
+          id: channel.id,
+          name: channel.name,
+          image: channel.image,
+          link: channel.link,
+          subscribers: channel.subscribers,
+          categoryId: categories[categoryIndex].id,
+          likes: channel.likes,
+          isLike: channel.isLike));
+    } catch (e) {
+      assert(false);
+      return DBAccessResult.FAIL;
+    }
+
+    mCategory.categoryHashMap[categories[categoryIndex].id].remove(channel);
     notifyListeners();
 
     return DBAccessResult.SUCCESS;

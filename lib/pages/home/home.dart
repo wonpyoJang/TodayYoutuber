@@ -23,12 +23,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         Provider.of<HomeViewModel>(context, listen: false);
 
     urlReceivedEvent.stream.listen((url) {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        showModalBttomShsetForAddingChannel(context, url);
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+        int selectedCategoryIndex =
+            await showModalBttomShsetForAddingChannel(context, url);
+        _tabController.animateTo(selectedCategoryIndex);
       });
     });
-    _homeViewModel.getUrlWhenStartedBySharingIntent((url) {
-      showModalBttomShsetForAddingChannel(context, url);
+    _homeViewModel.getUrlWhenStartedBySharingIntent((url) async {
+      int selectedCategoryIndex =
+          await showModalBttomShsetForAddingChannel(context, url);
+      _tabController.animateTo(selectedCategoryIndex);
     });
 
     _tabController = TabController(
@@ -68,6 +72,86 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
+  Widget bildAppBar(BuildContext context) {
+    HomeViewModel _homeViewModel =
+        Provider.of<HomeViewModel>(context, listen: false);
+    List<Category> categories = _homeViewModel.categories;
+
+    return AppBar(
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(40.0),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: TabBar(
+            indicatorWeight: 2.0,
+            indicatorPadding: EdgeInsets.zero,
+            controller: _tabController,
+            labelPadding: EdgeInsets.symmetric(horizontal: 5),
+            isScrollable: true,
+            tabs: [
+              ...categories.map((category) {
+                final categoryIndex = categories.indexOf(category);
+                return Tab(
+                    iconMargin: EdgeInsets.zero,
+                    child: GestureDetector(
+                        onLongPress: () async {
+                          await onPressedCategoryMenu(context, categoryIndex);
+                        },
+                        onDoubleTap: () async =>
+                            onPressedCategoryMenu(context, categoryIndex),
+                        child: Container(
+                            height: 50,
+                            width: 65,
+                            child: Center(child: Text(category.title)))));
+              }),
+              Tab(
+                  child: InkWell(
+                      onTap: () => addNewCategory(context),
+                      child: Container(
+                          height: 40,
+                          width: 70,
+                          child: Center(child: Text("+ 추가하기"))))),
+            ],
+          ),
+        ),
+      ),
+      title: Text('유랭카'),
+    );
+  }
+
+  Future onPressedCategoryMenu(BuildContext context, int categoryIndex) async {
+    HomeViewModel _homeViewModel =
+        Provider.of<HomeViewModel>(context, listen: false);
+    List<Category> categories = _homeViewModel.categories;
+    Category category = categories[categoryIndex];
+
+    await showCategoryMenu(context, onPressedEdit: () async {
+      String newCategoryTitle = await showTextFieldDialog(context);
+
+      if (newCategoryTitle == null) {
+        return;
+      }
+
+      DBAccessResult result = await _homeViewModel.setCategoryTitle(
+          categoryIndex, newCategoryTitle);
+      if (result == DBAccessResult.FAIL) {
+        await showDBConnectionFailDailog(context);
+        return;
+      }
+    }, onPressedDelete: () async {
+      DBAccessResult result = await _homeViewModel.deleteCategory(category);
+      if (result == DBAccessResult.FAIL) {
+        await showDBConnectionFailDailog(context);
+        return;
+      }
+    });
+
+    setState(() {
+      _tabController =
+          new TabController(vsync: this, length: categories.length + 1);
+    });
+  }
+
   Widget buildBody(BuildContext context) {
     HomeViewModel _homeViewModel =
         Provider.of<HomeViewModel>(context, listen: false);
@@ -75,6 +159,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     return TabBarView(
       controller: _tabController,
+      physics: NeverScrollableScrollPhysics(),
       children: [
         ...categories.map((category) {
           final index = categories.indexOf(category);
@@ -89,54 +174,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget bildAppBar(BuildContext context) {
-    HomeViewModel _homeViewModel =
-        Provider.of<HomeViewModel>(context, listen: false);
-    List<Category> categories = _homeViewModel.categories;
-
-    return AppBar(
-      bottom: TabBar(
-        controller: _tabController,
-        tabs: [
-          ...categories.map((category) {
-            final categoryIndex = categories.indexOf(category);
-            return Tab(
-                child: GestureDetector(
-                    onLongPress: () async {
-                      String newCategoryTitle =
-                          await showTextFieldDialog(context);
-
-                      if (newCategoryTitle == null) {
-                        return;
-                      }
-
-                      DBAccessResult result = await _homeViewModel
-                          .setCategoryTitle(categoryIndex, newCategoryTitle);
-                      if (result == DBAccessResult.FAIL) {
-                        showDBConnectionFailDailog(context);
-                        return;
-                      }
-
-                      setState(() {});
-                    },
-                    child: Container(child: Text(category.title))));
-          }),
-          Tab(
-              child: InkWell(
-                  onTap: () => addNewCategory(context),
-                  child: Container(child: Text("+ 추가하기")))),
-        ],
-      ),
-      title: Text('유랭카'),
-    );
-  }
-
   Future<void> addNewCategory(BuildContext context) async {
     HomeViewModel _homeViewModel =
         Provider.of<HomeViewModel>(context, listen: false);
     List<Category> categories = _homeViewModel.categories;
 
     String newCategoryTitle = await showTextFieldDialog(context);
+
+    if (newCategoryTitle == null) {
+      return;
+    }
 
     DBAccessResult result = await _homeViewModel
         .addCategory(Category(title: newCategoryTitle, channels: []));
