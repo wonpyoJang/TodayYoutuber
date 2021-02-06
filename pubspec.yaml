@@ -43,6 +43,7 @@ dependencies:
   path:
   
   rxdart:
+  share: ^0.6.5+4
 
 dev_dependencies:
   flutter_test:

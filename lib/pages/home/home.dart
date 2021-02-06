@@ -23,12 +23,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         Provider.of<HomeViewModel>(context, listen: false);
 
     urlReceivedEvent.stream.listen((url) {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        showModalBttomShsetForAddingChannel(context, url);
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+        int selectedCategoryIndex =
+            await showModalBttomShsetForAddingChannel(context, url);
+        _tabController.animateTo(selectedCategoryIndex);
       });
     });
-    _homeViewModel.getUrlWhenStartedBySharingIntent((url) {
-      showModalBttomShsetForAddingChannel(context, url);
+    _homeViewModel.getUrlWhenStartedBySharingIntent((url) async {
+      int selectedCategoryIndex =
+          await showModalBttomShsetForAddingChannel(context, url);
+      _tabController.animateTo(selectedCategoryIndex);
     });
 
     _tabController = TabController(
