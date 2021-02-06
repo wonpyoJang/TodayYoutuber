@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:TodayYoutuber/main.dart';
 
+enum DBAccessResult { SUCCESS, FAIL }
+
 class HomeViewModel extends ChangeNotifier {
   List<mCategory.Category> categories = [
     mCategory.Category(id: 99999999, title: "플러터", channels: [
@@ -31,9 +33,6 @@ class HomeViewModel extends ChangeNotifier {
     ])
   ];
 
-  // * youtube 앱으로부터 공유 인텐트를 받는 경우
-  void subscribeSharingIntent(Function onReceiveSharingIntent) {}
-
   void getUrlWhenStartedBySharingIntent(Function onReceiveSharingIntent) {
     ReceiveSharingIntent.getInitialText().then((String value) {
       if (value == null || value.isEmpty) return;
@@ -42,12 +41,19 @@ class HomeViewModel extends ChangeNotifier {
     });
   }
 
-  void unsubscribeSharingIntent() {
-    // _intentDataStreamSubscription.cancel();
-  }
+  Future<DBAccessResult> getCategoriesFromDB() async {
+    List<db.Category> results;
 
-  Future<void> getCategoriesFromDB() async {
-    final List<db.Category> results = await database.allCategoryEntries;
+    try {
+      results = await database.allCategoryEntries;
+    } catch (e) {
+      assert(false);
+      return DBAccessResult.FAIL;
+    }
+
+    if (results == null) {
+      return DBAccessResult.FAIL;
+    }
 
     for (var i = 0; i < results.length; ++i) {
       categories.add(mCategory.Category(
@@ -55,10 +61,22 @@ class HomeViewModel extends ChangeNotifier {
     }
 
     notifyListeners();
+    return DBAccessResult.SUCCESS;
   }
 
-  Future<void> getChannelsFromDB() async {
-    final List<db.Channel> results = await database.allChannelEntries;
+  Future<DBAccessResult> getChannelsFromDB() async {
+    List<db.Channel> results;
+
+    try {
+      results = await database.allChannelEntries;
+    } catch (e) {
+      assert(false);
+      return DBAccessResult.FAIL;
+    }
+
+    if (results == null) {
+      return DBAccessResult.FAIL;
+    }
 
     for (var i = 0; i < results.length; ++i) {
       var channel = results[i];
@@ -73,33 +91,68 @@ class HomeViewModel extends ChangeNotifier {
     }
 
     notifyListeners();
+    return DBAccessResult.SUCCESS;
   }
 
   // * 카테고리
-  void addCategory(mCategory.Category newCategory) async {
+  Future<DBAccessResult> addCategory(mCategory.Category newCategory) async {
+    assert(newCategory != null, newCategory.title != null);
+
+    try {
+      // * id 는 auto increment이므로 필수가 아님.
+      // ignore: missing_required_param
+      await database.addCategory(db.Category(title: newCategory.title));
+    } catch (e) {
+      assert(false);
+      return DBAccessResult.FAIL;
+    }
+
     categories.add(newCategory);
 
-    // * id 는 auto increment이므로 필수가 아님.
-    // ignore: missing_required_param
-    await database.addCategory(db.Category(title: newCategory.title));
-
     notifyListeners();
+    return DBAccessResult.SUCCESS;
   }
 
-  void addEmptyCategory() async {
-    // * id 는 auto increment이므로 필수가 아님.
-    // ignore: missing_required_param
-    final int id = await database.addCategory(db.Category(title: "새카테고리"));
+  Future<DBAccessResult> addEmptyCategory() async {
+    int id;
+
+    try {
+      // * id 는 auto increment이므로 필수가 아님.
+      // ignore: missing_required_param
+      id = await database.addCategory(db.Category(title: "새카테고리"));
+    } catch (e) {
+      assert(false);
+      return DBAccessResult.FAIL;
+    }
+
+    if (id == null) {
+      return DBAccessResult.FAIL;
+    }
 
     addCategory(mCategory.Category(id: id, title: "새카테고리", channels: []));
     notifyListeners();
+    return DBAccessResult.SUCCESS;
   }
 
-  void setCategoryTitle(int categoryIndex, String newCategoryIitle) async {
+  Future<DBAccessResult> setCategoryTitle(
+      int categoryIndex, String newCategoryIitle) async {
+    assert(categoryIndex != null &&
+        categoryIndex >= 0 &&
+        categoryIndex < categories.length);
+    assert(newCategoryIitle != null && newCategoryIitle.isNotEmpty);
+
     categories[categoryIndex].setTitle(newCategoryIitle);
-    await database.updateCategory(
-        db.Category(id: categories[categoryIndex].id, title: "새카테고리"));
+
+    try {
+      await database.updateCategory(
+          db.Category(id: categories[categoryIndex].id, title: "새카테고리"));
+    } catch (e) {
+      assert(false);
+      return DBAccessResult.FAIL;
+    }
+
     notifyListeners();
+    return DBAccessResult.SUCCESS;
   }
 
   // * 채널
@@ -108,25 +161,39 @@ class HomeViewModel extends ChangeNotifier {
   int getLengthOfChannels(int categoryIndex) =>
       categories[categoryIndex].channels.length;
 
-  void addChannel(int categoryIndex, mChannel.Channel channel) async {
+  Future<DBAccessResult> addChannel(
+      int categoryIndex, mChannel.Channel channel) async {
     assert(channel != null);
-    assert(categoryIndex <= categories.length);
+    assert(categoryIndex != null && categoryIndex <= categories.length);
 
-    // * autoIncrement 필드 이므로 int 불필요.
-    // ignore: missing_required_param
-    int id = await database.addChannel(db.Channel(
-        name: channel.name,
-        image: channel.image,
-        link: channel.link,
-        subscribers: channel.subscribers,
-        categoryId: categories[categoryIndex].id,
-        likes: channel.likes,
-        isLike: channel.isLike));
+    int id;
+
+    try {
+      // * autoIncrement 필드 이므로 int 불필요.
+      // ignore: missing_required_param
+      id = await database.addChannel(db.Channel(
+          name: channel.name,
+          image: channel.image,
+          link: channel.link,
+          subscribers: channel.subscribers,
+          categoryId: categories[categoryIndex].id,
+          likes: channel.likes,
+          isLike: channel.isLike));
+    } catch (e) {
+      assert(false);
+      return DBAccessResult.FAIL;
+    }
+
+    if (id == null) {
+      return DBAccessResult.FAIL;
+    }
 
     channel.setId(id);
 
     mCategory.categoryHashMap[categories[categoryIndex].id].add(channel);
     notifyListeners();
+
+    return DBAccessResult.SUCCESS;
   }
 
   // * 좋아요
