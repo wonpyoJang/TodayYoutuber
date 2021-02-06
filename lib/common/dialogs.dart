@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 Future<void> showDBConnectionFailDailog(BuildContext context) async {
@@ -42,4 +43,39 @@ Future<void> _showErrorDialog(
       );
     },
   );
+}
+
+Future<void> showCategoryMenu(BuildContext context,
+    {Function onPressedEdit, Function onPressedDelete}) async {
+  await showCupertinoSelectionMenu(context, "메뉴", [
+    CupertinoActionSheetAction(
+        onPressed: () async {
+          await onPressedEdit();
+          Navigator.of(context).pop();
+        },
+        child: Text("편집")),
+    CupertinoActionSheetAction(
+        onPressed: () async {
+          await onPressedDelete();
+          Navigator.of(context).pop();
+        },
+        child: Text("삭제"))
+  ]);
+}
+
+Future<void> showCupertinoSelectionMenu(BuildContext context, String title,
+    List<CupertinoActionSheetAction> actions) async {
+  await showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return CupertinoActionSheet(
+          title: Text(title),
+          actions: actions,
+          cancelButton: CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("취소")),
+        );
+      });
 }

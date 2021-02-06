@@ -120,6 +120,26 @@ class HomeViewModel extends ChangeNotifier {
     return DBAccessResult.SUCCESS;
   }
 
+  // * 카테고리
+  Future<DBAccessResult> deleteCategory(mCategory.Category category) async {
+    assert(category != null, category.title != null);
+
+    try {
+      // id 는 auto increment이므로 필수가 아님.
+      // ignore: missing_required_param
+      await database
+          .deleteCategory(db.Category(id: category.id, title: category.title));
+    } catch (e) {
+      assert(false);
+      return DBAccessResult.FAIL;
+    }
+
+    categories.remove(category);
+
+    notifyListeners();
+    return DBAccessResult.SUCCESS;
+  }
+
   Future<DBAccessResult> addEmptyCategory() async {
     int id;
 
