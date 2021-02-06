@@ -106,7 +106,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       String newCategoryTitle =
                           await showTextFieldDialog(context);
 
-                      if (newCategoryTitle == null) return;
+                      if (newCategoryTitle == null) {
+                        return;
+                      }
 
                       DBAccessResult result = await _homeViewModel
                           .setCategoryTitle(categoryIndex, newCategoryTitle);
@@ -139,8 +141,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     DBAccessResult result = await _homeViewModel
         .addCategory(Category(title: newCategoryTitle, channels: []));
 
-    if (result == DBAccessResult.FAIL) {
-      showDBConnectionFailDailog(context);
+    if (result == DBAccessResult.DUPLICATED_CATEGORY) {
+      await showDuplicatedCategoryDailog(context);
+      return;
+    } else if (result == DBAccessResult.FAIL) {
+      await showDBConnectionFailDailog(context);
       return;
     }
 

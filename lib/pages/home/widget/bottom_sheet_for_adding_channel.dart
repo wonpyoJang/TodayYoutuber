@@ -65,8 +65,11 @@ class _AddButton extends StatelessWidget {
           DBAccessResult result =
               await _homeViewModel.addChannel(0, parsedChannel);
 
-          if (result == DBAccessResult.FAIL) {
-            showDBConnectionFailDailog(context);
+          if (result == DBAccessResult.DUPLICATED_CHANNEL) {
+            await showDuplicatedChannelDailog(context);
+            return;
+          } else if (result == DBAccessResult.FAIL) {
+            await showDBConnectionFailDailog(context);
             return;
           }
 

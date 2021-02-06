@@ -514,7 +514,7 @@ class $ChannelsTable extends Channels with TableInfo<$ChannelsTable, Channel> {
   GeneratedTextColumn get name => _name ??= _constructName();
   GeneratedTextColumn _constructName() {
     return GeneratedTextColumn('name', $tableName, false,
-        minTextLength: 1, maxTextLength: 60, $customConstraints: 'UNIQUE');
+        minTextLength: 1, maxTextLength: 60);
   }
 
   final VerificationMeta _imageMeta = const VerificationMeta('image');

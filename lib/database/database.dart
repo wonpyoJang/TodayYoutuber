@@ -21,8 +21,7 @@ class Categories extends Table {
 // be represented by a class called "Todo".
 class Channels extends Table {
   IntColumn get id => integer().autoIncrement()();
-  TextColumn get name =>
-      text().withLength(min: 1, max: 60).customConstraint('UNIQUE')();
+  TextColumn get name => text().withLength(min: 1, max: 60)();
   TextColumn get image => text().withLength(min: 0, max: 2083)();
   TextColumn get link => text().withLength(min: 0, max: 2083)();
   TextColumn get subscribers => text().withLength(min: 0, max: 255)();

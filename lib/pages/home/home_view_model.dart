@@ -6,8 +6,10 @@ import 'package:TodayYoutuber/models/channel.dart' as mChannel;
 import 'package:flutter/material.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:TodayYoutuber/main.dart';
+// ignore: implementation_imports
+import 'package:sqlite3/src/api/exception.dart';
 
-enum DBAccessResult { SUCCESS, FAIL }
+enum DBAccessResult { SUCCESS, DUPLICATED_CATEGORY, DUPLICATED_CHANNEL, FAIL }
 
 class HomeViewModel extends ChangeNotifier {
   List<mCategory.Category> categories = [
@@ -99,9 +101,14 @@ class HomeViewModel extends ChangeNotifier {
     assert(newCategory != null, newCategory.title != null);
 
     try {
-      // * id 는 auto increment이므로 필수가 아님.
+      // id 는 auto increment이므로 필수가 아님.
       // ignore: missing_required_param
       await database.addCategory(db.Category(title: newCategory.title));
+    } on SqliteException catch (e) {
+      assert(false);
+      if (e.extendedResultCode == 2067) {
+        return DBAccessResult.DUPLICATED_CATEGORY;
+      }
     } catch (e) {
       assert(false);
       return DBAccessResult.FAIL;
@@ -117,7 +124,7 @@ class HomeViewModel extends ChangeNotifier {
     int id;
 
     try {
-      // * id 는 auto increment이므로 필수가 아님.
+      // id 는 auto increment이므로 필수가 아님.
       // ignore: missing_required_param
       id = await database.addCategory(db.Category(title: "새카테고리"));
     } catch (e) {
@@ -158,6 +165,7 @@ class HomeViewModel extends ChangeNotifier {
   // * 채널
   List<mChannel.Channel> getChannels(int categoryIndex) =>
       categories[categoryIndex].channels;
+
   int getLengthOfChannels(int categoryIndex) =>
       categories[categoryIndex].channels.length;
 
@@ -166,12 +174,21 @@ class HomeViewModel extends ChangeNotifier {
     assert(channel != null);
     assert(categoryIndex != null && categoryIndex <= categories.length);
 
-    int id;
+    // todo : 현재 순차적 리스트 탐색으로 중복 채널 여부를 탐색하고 있는데, 추후 탐색 방법을 hash에 의한 존재 여부 확인으로 변경할 것.
+    bool isExistInThisList = mCategory
+        .categoryHashMap[categories[categoryIndex].id]
+        .any((channelItem) => channelItem.name == channel.name);
+
+    if (isExistInThisList) {
+      return DBAccessResult.DUPLICATED_CHANNEL;
+    }
+
+    int newChannelId;
 
     try {
-      // * autoIncrement 필드 이므로 int 불필요.
+      // autoIncrement 필드 이므로 int 불필요.
       // ignore: missing_required_param
-      id = await database.addChannel(db.Channel(
+      newChannelId = await database.addChannel(db.Channel(
           name: channel.name,
           image: channel.image,
           link: channel.link,
@@ -184,11 +201,11 @@ class HomeViewModel extends ChangeNotifier {
       return DBAccessResult.FAIL;
     }
 
-    if (id == null) {
+    if (newChannelId == null) {
       return DBAccessResult.FAIL;
     }
 
-    channel.setId(id);
+    channel.setId(newChannelId);
 
     mCategory.categoryHashMap[categories[categoryIndex].id].add(channel);
     notifyListeners();
