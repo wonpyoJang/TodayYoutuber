@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:TodayYoutuber/common/route_manager.dart';
 import 'package:TodayYoutuber/database/database.dart';
 import 'package:TodayYoutuber/pages/home/home.dart';
 import 'package:TodayYoutuber/pages/home/home_view_model.dart';
@@ -11,7 +12,7 @@ import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-PublishSubject<String> urlReceivedEvent = PublishSubject<String>();
+final PublishSubject<String> urlReceivedEvent = PublishSubject<String>();
 
 var logger = Logger(
   printer: PrettyPrinter(),
@@ -37,12 +38,14 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   // ignore: unused_field
+  // ignore: cancel_subscriptions
   StreamSubscription _intentDataStreamSubscription;
+
   @override
   void initState() {
     super.initState();
 
-    _intentDataStreamSubscription =
+    this._intentDataStreamSubscription =
         ReceiveSharingIntent.getTextStream().listen((String value) {
       if (value == null || value.isEmpty) return;
       print("url listend");
@@ -55,7 +58,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void dispose() {
     super.dispose();
-    _intentDataStreamSubscription.cancel();
+    this._intentDataStreamSubscription.cancel();
   }
 
   @override
@@ -64,12 +67,14 @@ class _MyAppState extends State<MyApp> {
     return ChangeNotifierProvider(
       create: (context) => HomeViewModel(),
       child: MaterialApp(
-          title: 'Flutter Demo',
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-            visualDensity: VisualDensity.adaptivePlatformDensity,
-          ),
-          home: HomeScreen()),
+        title: 'Flutter Demo',
+        home: HomeScreen(),
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        onGenerateRoute: RouteManager.namesToScreen,
+      ),
     );
   }
 }

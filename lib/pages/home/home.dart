@@ -1,4 +1,5 @@
 import 'package:TodayYoutuber/common/dialogs.dart';
+import 'package:TodayYoutuber/common/route_manager.dart';
 import 'package:TodayYoutuber/models/category.dart';
 import 'package:TodayYoutuber/models/share_event.dart';
 import 'package:TodayYoutuber/models/user.dart';
@@ -6,6 +7,8 @@ import 'package:TodayYoutuber/pages/home/home_view_model.dart';
 import 'package:TodayYoutuber/pages/home/widget/bottom_sheet_for_adding_channel.dart';
 import 'package:TodayYoutuber/pages/home/widget/channel_list.dart';
 import 'package:TodayYoutuber/pages/home/widget/text_field_dialog.dart';
+import 'package:TodayYoutuber/pages/received_channels/received_channels.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:TodayYoutuber/main.dart';
@@ -39,18 +42,78 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       _tabController.animateTo(selectedCategoryIndex);
     });
 
+    this.initDynamicLinks(context);
+
     _tabController = TabController(
         length: _homeViewModel.categories.length + 1,
         vsync: this,
         initialIndex: 0);
 
-    getDatasFromDB(context);
+    this.getDatasFromDB(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    logger.d("[build] HomeScreen");
+
+    return Scaffold(
+      appBar: bildAppBar(context),
+      body: buildBody(context),
+    );
   }
 
   @override
   void dispose() {
     logger.d("[dispse] HomeScreen");
     super.dispose();
+  }
+
+  void initDynamicLinks(BuildContext context) async {
+    FirebaseDynamicLinks.instance.onLink(
+        onSuccess: (PendingDynamicLinkData dynamicLink) async {
+      final Uri deepLink = dynamicLink?.link;
+
+      if (deepLink != null) {
+        DataSnapshot sharedData = await databaseReference
+            .child(deepLink.queryParameters["shareKey"])
+            .once();
+
+        var json = sharedData.value.cast<String, dynamic>();
+        json['user'] = json['user'].cast<String, dynamic>();
+        json['categories'] = json['categories']
+            .map((category) => category.cast<String, dynamic>())
+            .toList();
+
+        for (int i = 0; i < json['categories'].length; ++i) {
+          json['categories'][i]['channels'] = json['categories'][i]['channels']
+              .map((channel) => channel.cast<String, dynamic>())
+              .toList();
+        }
+
+        var sharedEvent =
+            ShareEvent.fromJson(sharedData.value.cast<String, dynamic>());
+
+        Navigator.pushNamed(context, RouteLists.receivedChannels,
+            arguments: ReceivedChannelsArgument(sharedEvent: sharedEvent));
+      }
+    }, onError: (OnLinkErrorException e) async {
+      print('onLinkError');
+      print(e.message);
+    });
+
+    final PendingDynamicLinkData data =
+        await FirebaseDynamicLinks.instance.getInitialLink();
+    final Uri deepLink = data?.link;
+
+    if (deepLink != null) {
+      DataSnapshot sharedChannelList = await databaseReference
+          .child(deepLink.queryParameters["shareKey"])
+          .once();
+
+      Navigator.pushNamed(context, RouteLists.receivedChannels,
+          arguments:
+              ReceivedChannelsArgument(sharedEvent: sharedChannelList.value));
+    }
   }
 
   void getDatasFromDB(BuildContext context) async {
@@ -64,16 +127,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     _tabController = TabController(vsync: this, length: categories.length + 1);
 
     setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    logger.d("[build] HomeScreen");
-
-    return Scaffold(
-      appBar: bildAppBar(context),
-      body: buildBody(context),
-    );
   }
 
   Widget bildAppBar(BuildContext context) {
@@ -125,10 +178,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           Text('유랭카'),
           GestureDetector(
             onTap: () async {
+              String shareKey =
+                  "kildong" + DateTime.now().millisecondsSinceEpoch.toString();
+
               // todo: 이 부분은 추후 다른 페이지로 옮길 예정이므로 viewModel로 따로 빼지 않습니다.
               final DynamicLinkParameters parameters = DynamicLinkParameters(
                 uriPrefix: 'https://todayyoutuber.page.link',
-                link: Uri.parse('https://example.com/'),
+                link: Uri.parse(
+                    'https://todayyoutuber.page.link?shareKey=' + shareKey),
                 androidParameters: AndroidParameters(
                   packageName: 'com.example.TodayYoutuber',
                   minimumVersion: 1,
@@ -165,12 +222,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
               logger.d(shareEvent.toJson());
               var shareEventJosn = shareEvent.toJson();
-              var firebaseDataKey = shortUrl.toString().split(".").join();
 
               try {
-                await databaseReference
-                    .child(firebaseDataKey)
-                    .set(shareEventJosn);
+                await databaseReference.child(shareKey).set(shareEventJosn);
               } catch (e) {
                 assert(false);
                 return;
