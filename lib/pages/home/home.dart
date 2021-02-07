@@ -1,5 +1,7 @@
 import 'package:TodayYoutuber/common/dialogs.dart';
 import 'package:TodayYoutuber/models/category.dart';
+import 'package:TodayYoutuber/models/share_event.dart';
+import 'package:TodayYoutuber/models/user.dart';
 import 'package:TodayYoutuber/pages/home/home_view_model.dart';
 import 'package:TodayYoutuber/pages/home/widget/bottom_sheet_for_adding_channel.dart';
 import 'package:TodayYoutuber/pages/home/widget/channel_list.dart';
@@ -7,6 +9,8 @@ import 'package:TodayYoutuber/pages/home/widget/text_field_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:TodayYoutuber/main.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:share/share.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -115,7 +119,73 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
         ),
       ),
-      title: Text('유랭카'),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('유랭카'),
+          GestureDetector(
+            onTap: () async {
+              // todo: 이 부분은 추후 다른 페이지로 옮길 예정이므로 viewModel로 따로 빼지 않습니다.
+              final DynamicLinkParameters parameters = DynamicLinkParameters(
+                uriPrefix: 'https://todayyoutuber.page.link',
+                link: Uri.parse('https://example.com/'),
+                androidParameters: AndroidParameters(
+                  packageName: 'com.example.TodayYoutuber',
+                  minimumVersion: 1,
+                ),
+                iosParameters: IosParameters(
+                  bundleId: 'com.example.TodayYoutuber',
+                  minimumVersion: '1.0.1',
+                  appStoreId: '123456789',
+                ),
+                googleAnalyticsParameters: GoogleAnalyticsParameters(
+                  campaign: 'example-promo',
+                  medium: 'social',
+                  source: 'orkut',
+                ),
+                itunesConnectAnalyticsParameters:
+                    ItunesConnectAnalyticsParameters(
+                  providerToken: '123456',
+                  campaignToken: 'example-promo',
+                ),
+                socialMetaTagParameters: SocialMetaTagParameters(
+                  title: '장원표(플러터 개발자)님의 유튜브 구독목록을 확인해보세요!',
+                  description: '장원표(플러터 개발자)님의 유튜브 구독목록을 확인해보세요!',
+                ),
+              );
+
+              final ShortDynamicLink shortDynamicLink =
+                  await parameters.buildShortLink();
+              final Uri shortUrl = shortDynamicLink.shortUrl;
+
+              var shareEvent = ShareEvent(
+                  url: shortUrl.toString(),
+                  user: User(username: "장원표", jobTitle: "플러터개발자"),
+                  categories: categories);
+
+              logger.d(shareEvent.toJson());
+              var shareEventJosn = shareEvent.toJson();
+              var firebaseDataKey = shortUrl.toString().split(".").join();
+
+              try {
+                await databaseReference
+                    .child(firebaseDataKey)
+                    .set(shareEventJosn);
+              } catch (e) {
+                assert(false);
+                return;
+              }
+
+              await Share.share(shortUrl.toString());
+            },
+            child: Container(
+                width: 44,
+                height: 44,
+                margin: EdgeInsets.symmetric(horizontal: 15),
+                child: Icon(Icons.share)),
+          ),
+        ],
+      ),
     );
   }
 

@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:logger/logger.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 PublishSubject<String> urlReceivedEvent = PublishSubject<String>();
 
@@ -21,6 +22,7 @@ var loggerNoStack = Logger(
 );
 
 MyDatabase database;
+final databaseReference = FirebaseDatabase.instance.reference();
 
 void main() {
   database = MyDatabase();

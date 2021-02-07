@@ -1,15 +1,12 @@
-import 'package:json_annotation/json_annotation.dart';
-
 import 'package:TodayYoutuber/models/channel.dart';
 import 'package:TodayYoutuber/main.dart';
 import 'dart:collection';
 import 'package:TodayYoutuber/database/database.dart' as db;
-
-part 'category.g.dart';
+import 'dart:convert';
 
 HashMap<int, List<Channel>> categoryHashMap = HashMap<int, List<Channel>>();
 
-@JsonSerializable(nullable: true)
+// * 여기는 channels getter로 인해 josnSerializable을 제외하고 직접 관리합니다.
 class Category {
   int id;
   String title;
@@ -55,3 +52,20 @@ class Category {
       _$CategoryFromJson(json);
   Map<String, dynamic> toJson() => _$CategoryToJson(this);
 }
+
+Category _$CategoryFromJson(Map<String, dynamic> json) {
+  return Category(
+    id: json['id'] as int,
+    title: json['title'] as String,
+    channels: (json['channels'] as List)
+        ?.map((e) =>
+            e == null ? null : Channel.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
+  );
+}
+
+Map<String, dynamic> _$CategoryToJson(Category instance) => <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'channels': jsonDecode(jsonEncode(instance.channels)),
+    };
