@@ -12,6 +12,7 @@ class Category {
   String title;
 
   get channels => categoryHashMap[id];
+  get lengthOfChannel => categoryHashMap[id].length;
 
   Category({
     this.id,

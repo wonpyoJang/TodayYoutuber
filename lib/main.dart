@@ -4,6 +4,7 @@ import 'package:TodayYoutuber/common/route_manager.dart';
 import 'package:TodayYoutuber/database/database.dart';
 import 'package:TodayYoutuber/pages/home/home.dart';
 import 'package:TodayYoutuber/pages/home/home_view_model.dart';
+import 'package:TodayYoutuber/pages/received_channels/recevied_channels_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -64,8 +65,13 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     logger.d("[build] MyApp");
-    return ChangeNotifierProvider(
-      create: (context) => HomeViewModel(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => HomeViewModel(),
+        ),
+        ChangeNotifierProvider(create: (context) => ReceivedChannelsViewModel())
+      ],
       child: MaterialApp(
         title: 'Flutter Demo',
         home: HomeScreen(),

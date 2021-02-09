@@ -8,6 +8,7 @@ import 'package:TodayYoutuber/pages/home/widget/bottom_sheet_for_adding_channel.
 import 'package:TodayYoutuber/pages/home/widget/channel_list.dart';
 import 'package:TodayYoutuber/pages/home/widget/text_field_dialog.dart';
 import 'package:TodayYoutuber/pages/received_channels/received_channels.dart';
+import 'package:TodayYoutuber/pages/received_channels/recevied_channels_view_model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -69,6 +70,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void initDynamicLinks(BuildContext context) async {
+    var receviedChannelsViewModel =
+        Provider.of<ReceivedChannelsViewModel>(context, listen: false);
+
     FirebaseDynamicLinks.instance.onLink(
         onSuccess: (PendingDynamicLinkData dynamicLink) async {
       final Uri deepLink = dynamicLink?.link;
@@ -93,6 +97,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         var sharedEvent =
             ShareEvent.fromJson(sharedData.value.cast<String, dynamic>());
 
+        receviedChannelsViewModel.sharedEvent = sharedEvent;
+
         Navigator.pushNamed(context, RouteLists.receivedChannels,
             arguments: ReceivedChannelsArgument(sharedEvent: sharedEvent));
       }
@@ -106,13 +112,29 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     final Uri deepLink = data?.link;
 
     if (deepLink != null) {
-      DataSnapshot sharedChannelList = await databaseReference
+      DataSnapshot sharedData = await databaseReference
           .child(deepLink.queryParameters["shareKey"])
           .once();
 
+      var json = sharedData.value.cast<String, dynamic>();
+      json['user'] = json['user'].cast<String, dynamic>();
+      json['categories'] = json['categories']
+          .map((category) => category.cast<String, dynamic>())
+          .toList();
+
+      for (int i = 0; i < json['categories'].length; ++i) {
+        json['categories'][i]['channels'] = json['categories'][i]['channels']
+            .map((channel) => channel.cast<String, dynamic>())
+            .toList();
+      }
+
+      var sharedEvent =
+          ShareEvent.fromJson(sharedData.value.cast<String, dynamic>());
+
+      receviedChannelsViewModel.sharedEvent = sharedEvent;
+
       Navigator.pushNamed(context, RouteLists.receivedChannels,
-          arguments:
-              ReceivedChannelsArgument(sharedEvent: sharedChannelList.value));
+          arguments: ReceivedChannelsArgument(sharedEvent: sharedEvent));
     }
   }
 
@@ -277,8 +299,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget buildBody(BuildContext context) {
-    HomeViewModel _homeViewModel =
-        Provider.of<HomeViewModel>(context, listen: false);
+    HomeViewModel _homeViewModel = Provider.of<HomeViewModel>(context);
     List<Category> categories = _homeViewModel.categories;
 
     return TabBarView(
@@ -286,8 +307,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       physics: NeverScrollableScrollPhysics(),
       children: [
         ...categories.map((category) {
-          final index = categories.indexOf(category);
-          return CategoryView(categoryIndex: index);
+          final categoryIndex = categories.indexOf(category);
+          return ChannelList(
+            category: category,
+            onTapDeleteButton: (channelIndex) async {
+              var result = await _homeViewModel.deleteChannel(
+                  categoryIndex, category.channels[channelIndex]);
+
+              if (result == DBAccessResult.FAIL) {
+                showDBConnectionFailDailog(context);
+              }
+            },
+          );
         }),
         Center(
             child: InkWell(
@@ -299,8 +330,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Future<void> addNewCategory(BuildContext context) async {
-    HomeViewModel _homeViewModel =
-        Provider.of<HomeViewModel>(context, listen: false);
+    HomeViewModel _homeViewModel = Provider.of<HomeViewModel>(context);
     List<Category> categories = _homeViewModel.categories;
 
     String newCategoryTitle = await showTextFieldDialog(context);
