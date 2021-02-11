@@ -11,6 +11,7 @@ class ChannelList extends StatelessWidget {
   final bool isSelectable;
   final Function onSelectChannel;
   final bool enableGoToYoutube;
+  final bool isSlidable;
   const ChannelList(
       {Key key,
       this.onTapDeleteButton,
@@ -18,7 +19,8 @@ class ChannelList extends StatelessWidget {
       this.disableScroll = false,
       this.isSelectable = false,
       this.onSelectChannel,
-      this.enableGoToYoutube = true})
+      this.enableGoToYoutube = true,
+      this.isSlidable = true})
       : super(key: key);
 
   @override
@@ -36,6 +38,7 @@ class ChannelList extends StatelessWidget {
       },
       itemBuilder: (BuildContext context, int index) {
         return ChannelItem(
+            isSlidable: isSlidable,
             isSelectable: isSelectable,
             channel: category.channels[index],
             onSelectChannel: onSelectChannel,

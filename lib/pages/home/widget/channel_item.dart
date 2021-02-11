@@ -9,7 +9,8 @@ class ChannelItem extends StatelessWidget {
       this.onTapDelete,
       this.isSelectable = false,
       this.onSelectChannel,
-      this.enableGoToYoutube})
+      this.enableGoToYoutube,
+      this.isSlidable = true})
       : super(key: key);
 
   final Channel channel;
@@ -17,12 +18,14 @@ class ChannelItem extends StatelessWidget {
   final bool isSelectable;
   final Function onSelectChannel;
   final bool enableGoToYoutube;
+  final bool isSlidable;
 
   @override
   Widget build(BuildContext context) {
     assert(channel != null);
 
     return Slidable(
+      enabled: isSlidable,
       actionPane: SlidableDrawerActionPane(),
       actionExtentRatio: 0.15,
       child: InkWell(

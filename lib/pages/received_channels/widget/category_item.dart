@@ -108,6 +108,7 @@ class _CategoryItemState extends State<CategoryItem>
           axisAlignment: 1.0,
           sizeFactor: animation,
           child: ChannelList(
+            isSlidable: false,
             enableGoToYoutube: widget.enableGoToYoutube,
             onSelectChannel: widget.onSelectChannel,
             isSelectable: true,
