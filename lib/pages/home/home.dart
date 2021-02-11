@@ -26,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   TabController _tabController;
 
   void initState() {
+    this.getDatasFromDB(context);
     logger.d("[initState] HomeScreen");
     super.initState();
     HomeViewModel _homeViewModel =
@@ -74,8 +75,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         length: _homeViewModel.categories.length + 1,
         vsync: this,
         initialIndex: 0);
-
-    this.getDatasFromDB(context);
   }
 
   @override
@@ -177,9 +176,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     List<Category> categories = _homeViewModel.categories;
 
     _homeViewModel.clear();
-    await _homeViewModel.getCategoriesFromDB();
-    await _homeViewModel.getChannelsFromDB();
-
+    try {
+      await _homeViewModel.getCategoriesFromDB();
+      await _homeViewModel.getChannelsFromDB();
+    } catch (_) {}
     _tabController = TabController(vsync: this, length: categories.length + 1);
 
     setState(() {});

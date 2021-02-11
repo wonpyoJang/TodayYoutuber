@@ -67,6 +67,11 @@ class HomeViewModel extends ChangeNotifier {
     for (var i = 0; i < results.length; ++i) {
       var channel = results[i];
 
+      if (false ==
+          mCategory.categoryHashMap.containsKey(results[i].categoryId)) {
+        continue;
+      }
+
       mCategory.categoryHashMap[results[i].categoryId].add(mChannel.Channel(
           id: channel.id,
           name: channel.name,
@@ -113,6 +118,10 @@ class HomeViewModel extends ChangeNotifier {
   // * 카테고리
   Future<DBAccessResult> deleteCategory(mCategory.Category category) async {
     assert(category != null, category.title != null);
+
+    for (var channel in category.channels) {
+      await deleteChannel(categories.indexOf(category), channel);
+    }
 
     try {
       // id 는 auto increment이므로 필수가 아님.
