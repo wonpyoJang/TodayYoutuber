@@ -14,6 +14,11 @@ enum DBAccessResult { SUCCESS, DUPLICATED_CATEGORY, DUPLICATED_CHANNEL, FAIL }
 class HomeViewModel extends ChangeNotifier {
   List<mCategory.Category> categories = [];
 
+  void clear() {
+    categories.clear();
+    mCategory.categoryHashMap.clear();
+  }
+
   void getUrlWhenStartedBySharingIntent(Function onReceiveSharingIntent) {
     ReceiveSharingIntent.getInitialText().then((String value) {
       if (value == null || value.isEmpty) return;
@@ -93,6 +98,8 @@ class HomeViewModel extends ChangeNotifier {
     } catch (e) {
       assert(false);
       return DBAccessResult.FAIL;
+    } finally {
+      isLoading.add(false);
     }
 
     newCategory.setId(id);

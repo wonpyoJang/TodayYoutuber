@@ -176,6 +176,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         Provider.of<HomeViewModel>(context, listen: false);
     List<Category> categories = _homeViewModel.categories;
 
+    _homeViewModel.clear();
     await _homeViewModel.getCategoriesFromDB();
     await _homeViewModel.getChannelsFromDB();
 
@@ -218,7 +219,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               }),
               Tab(
                   child: InkWell(
-                      onTap: () => addNewCategory(context),
+                      onTap: () async {
+                        isLoading.add(true);
+                        await addNewCategory(context);
+                        isLoading.add(false);
+                      },
                       child: Container(
                           height: 40,
                           width: 70,
@@ -323,7 +328,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           }),
           Center(
               child: InkWell(
-                  onTap: () => addNewCategory(context),
+                  onTap: () async {
+                    isLoading.add(true);
+                    await addNewCategory(context);
+                    isLoading.add(false);
+                  },
                   child: Container(
                       width: 100, height: 100, child: Text("+ 추가하기")))),
         ],
@@ -332,7 +341,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Future<void> addNewCategory(BuildContext context) async {
-    isLoading.add(true);
     HomeViewModel _homeViewModel =
         Provider.of<HomeViewModel>(context, listen: false);
     List<Category> categories = _homeViewModel.categories;
@@ -353,7 +361,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       await showDBConnectionFailDailog(context);
       return;
     }
-    isLoading.add(false);
 
     setState(() {
       _tabController =
