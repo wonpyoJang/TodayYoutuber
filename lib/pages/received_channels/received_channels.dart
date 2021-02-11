@@ -1,3 +1,4 @@
+import 'package:TodayYoutuber/common/loading_overlay.dart';
 import 'package:TodayYoutuber/common/route_manager.dart';
 import 'package:TodayYoutuber/models/category.dart';
 import 'package:TodayYoutuber/models/channel.dart';
@@ -40,24 +41,26 @@ class _ReceivedChannelsScreenState extends State<ReceivedChannelsScreen> {
     return Scaffold(
       appBar:
           AppBar(title: Text("${user.username}(${user.jobTitle})이 공유한 채널 리스트")),
-      body: CategoryList(
-          categories: categories,
-          onSelectCategory: (Category category) {
-            if (category.selected) {
-              category.selected = false;
-            } else {
-              category.selected = true;
-            }
-            setState(() {});
-          },
-          onSelectChannel: (Channel channel) {
-            if (channel.selected) {
-              channel.selected = false;
-            } else {
-              channel.selected = true;
-            }
-            setState(() {});
-          }),
+      body: LoadingOverlay(
+        child: CategoryList(
+            categories: categories,
+            onSelectCategory: (Category category) {
+              if (category.selected) {
+                category.selected = false;
+              } else {
+                category.selected = true;
+              }
+              setState(() {});
+            },
+            onSelectChannel: (Channel channel) {
+              if (channel.selected) {
+                channel.selected = false;
+              } else {
+                channel.selected = true;
+              }
+              setState(() {});
+            }),
+      ),
       bottomNavigationBar: Container(
         height: 65,
         child: Row(

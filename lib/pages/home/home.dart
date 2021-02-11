@@ -1,4 +1,5 @@
 import 'package:TodayYoutuber/common/dialogs.dart';
+import 'package:TodayYoutuber/common/loading_overlay.dart';
 import 'package:TodayYoutuber/common/route_manager.dart';
 import 'package:TodayYoutuber/models/category.dart';
 import 'package:TodayYoutuber/models/channel.dart';
@@ -32,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     urlReceivedEvent.stream.listen((url) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+        isLoading.add(false);
         int selectedCategoryIndex = await showModalBttomSheetForAddingChanel(
             context, url, (selectedCategoryIndex, parsedChannel) async {
           // todo : 이 부분은 getUrlWhenStartedBySharingINtent에 들어가는 콜백에서 중복된다.
@@ -98,6 +100,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     FirebaseDynamicLinks.instance.onLink(
         onSuccess: (PendingDynamicLinkData dynamicLink) async {
+      isLoading.add(true);
+
       final Uri deepLink = dynamicLink?.link;
 
       if (deepLink != null) {
@@ -122,6 +126,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
         receviedChannelsViewModel.sharedEvent = sharedEvent;
 
+        isLoading.add(false);
+
         Navigator.pushNamed(context, RouteLists.receivedChannels,
             arguments: ReceivedChannelsArgument(sharedEvent: sharedEvent));
       }
@@ -135,6 +141,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     final Uri deepLink = data?.link;
 
     if (deepLink != null) {
+      isLoading.add(true);
+
       DataSnapshot sharedData = await databaseReference
           .child(deepLink.queryParameters["shareKey"])
           .once();
@@ -155,6 +163,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ShareEvent.fromJson(sharedData.value.cast<String, dynamic>());
 
       receviedChannelsViewModel.sharedEvent = sharedEvent;
+
+      isLoading.add(false);
 
       Navigator.pushNamed(context, RouteLists.receivedChannels,
           arguments: ReceivedChannelsArgument(sharedEvent: sharedEvent));
@@ -223,6 +233,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           Text('유랭카'),
           GestureDetector(
             onTap: () async {
+              isLoading.add(true);
+
               var shareItemViewModel =
                   Provider.of<SelectShareItemViewModel>(context, listen: false);
 
@@ -233,6 +245,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   channel.selected = true;
                 }
               }
+
+              isLoading.add(false);
 
               await Navigator.of(context)
                   .pushNamed(RouteLists.selectShareItemScreen);
@@ -286,34 +300,39 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         Provider.of<HomeViewModel>(context, listen: true);
     List<Category> categories = _homeViewModel.categories;
 
-    return TabBarView(
-      controller: _tabController,
-      physics: NeverScrollableScrollPhysics(),
-      children: [
-        ...categories.map((category) {
-          final categoryIndex = categories.indexOf(category);
-          return ChannelList(
-            category: category,
-            onTapDeleteButton: (channelIndex) async {
-              var result = await _homeViewModel.deleteChannel(
-                  categoryIndex, category.channels[channelIndex]);
+    return LoadingOverlay(
+      child: TabBarView(
+        controller: _tabController,
+        physics: NeverScrollableScrollPhysics(),
+        children: [
+          ...categories.map((category) {
+            final categoryIndex = categories.indexOf(category);
+            return ChannelList(
+              category: category,
+              onTapDeleteButton: (channelIndex) async {
+                isLoading.add(true);
+                var result = await _homeViewModel.deleteChannel(
+                    categoryIndex, category.channels[channelIndex]);
 
-              if (result == DBAccessResult.FAIL) {
-                showDBConnectionFailDailog(context);
-              }
-            },
-          );
-        }),
-        Center(
-            child: InkWell(
-                onTap: () => addNewCategory(context),
-                child:
-                    Container(width: 100, height: 100, child: Text("+ 추가하기")))),
-      ],
+                if (result == DBAccessResult.FAIL) {
+                  showDBConnectionFailDailog(context);
+                }
+                isLoading.add(false);
+              },
+            );
+          }),
+          Center(
+              child: InkWell(
+                  onTap: () => addNewCategory(context),
+                  child: Container(
+                      width: 100, height: 100, child: Text("+ 추가하기")))),
+        ],
+      ),
     );
   }
 
   Future<void> addNewCategory(BuildContext context) async {
+    isLoading.add(true);
     HomeViewModel _homeViewModel =
         Provider.of<HomeViewModel>(context, listen: false);
     List<Category> categories = _homeViewModel.categories;
@@ -334,6 +353,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       await showDBConnectionFailDailog(context);
       return;
     }
+    isLoading.add(false);
 
     setState(() {
       _tabController =

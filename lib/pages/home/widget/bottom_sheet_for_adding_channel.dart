@@ -19,7 +19,7 @@ Future<int> showModalBttomSheetForAddingChanel(
   Channel parsedChannel = await _parseChannelYoutbue(value);
   BehaviorSubject<int> selectedCategoryStream = BehaviorSubject<int>();
 
-  showModalBttomSheetBase(context,
+  await showModalBttomSheetBase(context,
       child: Container(
         height: 400,
         padding: EdgeInsets.symmetric(horizontal: 16.0),

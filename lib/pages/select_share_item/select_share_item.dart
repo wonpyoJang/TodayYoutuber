@@ -1,3 +1,4 @@
+import 'package:TodayYoutuber/common/loading_overlay.dart';
 import 'package:TodayYoutuber/main.dart';
 import 'package:TodayYoutuber/models/category.dart';
 import 'package:TodayYoutuber/models/channel.dart';
@@ -25,38 +26,38 @@ class SelectShareItemScreen extends StatefulWidget {
 }
 
 class _SelectShareItemScreenState extends State<SelectShareItemScreen> {
-
-  
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<SelectShareItemViewModel>(context);
     return Scaffold(
       appBar: AppBar(title: Text("공유하기")),
-      body: Container(
-        child: CategoryList(
-            categories: viewModel.categories,
-            onSelectCategory: (Category category) {
-              if (category.selected) {
-                category.selected = false;
-                category.channels.forEach((channel) {
+      body: LoadingOverlay(
+        child: Container(
+          child: CategoryList(
+              categories: viewModel.categories,
+              onSelectCategory: (Category category) {
+                if (category.selected) {
+                  category.selected = false;
+                  category.channels.forEach((channel) {
+                    channel.selected = false;
+                  });
+                } else {
+                  category.selected = true;
+                  category.channels.forEach((channel) {
+                    channel.selected = true;
+                  });
+                }
+                setState(() {});
+              },
+              onSelectChannel: (Channel channel) {
+                if (channel.selected) {
                   channel.selected = false;
-                });
-              } else {
-                category.selected = true;
-                category.channels.forEach((channel) {
+                } else {
                   channel.selected = true;
-                });
-              }
-              setState(() {});
-            },
-            onSelectChannel: (Channel channel) {
-              if (channel.selected) {
-                channel.selected = false;
-              } else {
-                channel.selected = true;
-              }
-              setState(() {});
-            }),
+                }
+                setState(() {});
+              }),
+        ),
       ),
       bottomNavigationBar: GestureDetector(
         onTap: () async {

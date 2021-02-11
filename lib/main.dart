@@ -27,6 +27,8 @@ var loggerNoStack = Logger(
 MyDatabase database;
 final databaseReference = FirebaseDatabase.instance.reference();
 
+final isLoading = BehaviorSubject<bool>();
+
 void main() {
   database = MyDatabase();
 
@@ -50,6 +52,7 @@ class _MyAppState extends State<MyApp> {
     this._intentDataStreamSubscription =
         ReceiveSharingIntent.getTextStream().listen((String value) {
       if (value == null || value.isEmpty) return;
+      isLoading.add(true);
       print("url listend");
       urlReceivedEvent.add(value);
     }, onError: (err) {
