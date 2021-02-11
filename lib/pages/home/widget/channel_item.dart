@@ -35,6 +35,9 @@ class ChannelItem extends StatelessWidget {
           }
         },
         child: Container(
+            color: isSelectable && channel.selected
+                ? Colors.yellow[100]
+                : Colors.white,
             padding: EdgeInsets.symmetric(
               horizontal: 16.0,
               vertical: 15.0,

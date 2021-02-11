@@ -78,7 +78,9 @@ class _CategoryItemState extends State<CategoryItem>
             actionPane: SlidableDrawerActionPane(),
             actionExtentRatio: 0.15,
             child: Container(
-                color: Colors.grey,
+                color: widget.category.selected
+                    ? Colors.grey[500]
+                    : Colors.grey[400],
                 height: 55.0,
                 child: Stack(
                   children: [
