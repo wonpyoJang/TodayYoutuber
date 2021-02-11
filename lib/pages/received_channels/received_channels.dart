@@ -43,6 +43,7 @@ class _ReceivedChannelsScreenState extends State<ReceivedChannelsScreen> {
           AppBar(title: Text("${user.username}(${user.jobTitle})이 공유한 채널 리스트")),
       body: LoadingOverlay(
         child: CategoryList(
+            enableGoToYoutube: false,
             categories: categories,
             onSelectCategory: (Category category) {
               if (category.selected) {

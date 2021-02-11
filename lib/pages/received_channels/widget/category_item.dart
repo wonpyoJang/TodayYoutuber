@@ -11,7 +11,8 @@ class CategoryItem extends StatefulWidget {
       this.expand,
       this.onTapCategory,
       this.onSelectCategory,
-      this.onSelectChannel})
+      this.onSelectChannel,
+      this.enableGoToYoutube = true})
       : super(key: key);
 
   final Category category;
@@ -19,6 +20,7 @@ class CategoryItem extends StatefulWidget {
   final bool expand;
   final Function onSelectCategory;
   final Function onSelectChannel;
+  final bool enableGoToYoutube;
 
   @override
   _CategoryItemState createState() => _CategoryItemState();
@@ -106,6 +108,7 @@ class _CategoryItemState extends State<CategoryItem>
           axisAlignment: 1.0,
           sizeFactor: animation,
           child: ChannelList(
+            enableGoToYoutube: widget.enableGoToYoutube,
             onSelectChannel: widget.onSelectChannel,
             isSelectable: true,
             category: widget.category,

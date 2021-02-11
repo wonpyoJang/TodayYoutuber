@@ -5,12 +5,17 @@ import 'package:TodayYoutuber/main.dart';
 
 class CategoryList extends StatefulWidget {
   const CategoryList(
-      {Key key, this.categories, this.onSelectCategory, this.onSelectChannel})
+      {Key key,
+      this.categories,
+      this.onSelectCategory,
+      this.onSelectChannel,
+      this.enableGoToYoutube})
       : super(key: key);
 
   final List<Category> categories;
   final Function onSelectCategory;
   final Function onSelectChannel;
+  final bool enableGoToYoutube;
 
   @override
   _CategoryListState createState() => _CategoryListState();
@@ -41,6 +46,7 @@ class _CategoryListState extends State<CategoryList> {
       },
       itemBuilder: (BuildContext context, int index) {
         return CategoryItem(
+          enableGoToYoutube: widget.enableGoToYoutube,
           onSelectCategory: widget.onSelectCategory,
           onSelectChannel: widget.onSelectChannel,
           category: widget.categories[index],

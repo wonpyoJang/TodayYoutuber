@@ -34,6 +34,7 @@ class _SelectShareItemScreenState extends State<SelectShareItemScreen> {
       body: LoadingOverlay(
         child: Container(
           child: CategoryList(
+              enableGoToYoutube: false,
               categories: viewModel.categories,
               onSelectCategory: (Category category) {
                 if (category.selected) {

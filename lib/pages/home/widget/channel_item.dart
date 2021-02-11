@@ -8,13 +8,15 @@ class ChannelItem extends StatelessWidget {
       @required this.channel,
       this.onTapDelete,
       this.isSelectable = false,
-      this.onSelectChannel})
+      this.onSelectChannel,
+      this.enableGoToYoutube})
       : super(key: key);
 
   final Channel channel;
   final Function onTapDelete;
   final bool isSelectable;
   final Function onSelectChannel;
+  final bool enableGoToYoutube;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,9 @@ class ChannelItem extends StatelessWidget {
       actionExtentRatio: 0.15,
       child: InkWell(
         onTap: () async {
-          channel.openUrlWithInappBrowser();
+          if (enableGoToYoutube) {
+            channel.openUrlWithInappBrowser();
+          }
         },
         child: Container(
             padding: EdgeInsets.symmetric(
