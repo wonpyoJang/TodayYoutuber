@@ -1,15 +1,17 @@
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:rxdart/rxdart.dart';
+
 import 'package:TodayYoutuber/common/dialogs.dart';
+import 'package:TodayYoutuber/main.dart';
 import 'package:TodayYoutuber/models/category.dart';
 import 'package:TodayYoutuber/models/channel.dart';
 import 'package:TodayYoutuber/pages/home/home_view_model.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
-import 'package:TodayYoutuber/main.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:TodayYoutuber/pages/home/widget/channel_item.dart';
 
-Future<int> showModalBttomShsetForAddingChannel(
-    BuildContext context, String value) async {
+Future<int> showModalBttomSheetForAddingChanel(
+    BuildContext context, String value, Function onTapAddButton) async {
   assert(value != null && value.isNotEmpty);
   if (value == null) {
     return null;
@@ -17,98 +19,260 @@ Future<int> showModalBttomShsetForAddingChannel(
   Channel parsedChannel = await _parseChannelYoutbue(value);
   BehaviorSubject<int> selectedCategoryStream = BehaviorSubject<int>();
 
-  await showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return Material(
-          color: Colors.transparent,
-          child: Container(
-            height: 400,
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              children: [
-                SizedBox(height: 20),
-                Text("채널 추가하기", style: TextStyle(fontSize: 25)),
-                SizedBox(height: 10),
-                _TextField(tag: "url", value: parsedChannel.link),
-                SizedBox(height: 15),
-                _TextField(tag: "채널명", value: parsedChannel.name),
-                SizedBox(height: 15),
-                _TextField(tag: "구독자수", value: parsedChannel.subscribers),
-                SizedBox(height: 10),
-                _SelectionBox(
-                    tag: "분류", selectedCategoryStream: selectedCategoryStream),
-                SizedBox(height: 50),
-                _AddButton(
-                    parsedChannel: parsedChannel,
-                    selectedCategoryStream: selectedCategoryStream),
-              ],
+  showModalBttomSheetBase(context,
+      child: Container(
+        height: 400,
+        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(height: 20),
+            Text("채널 추가하기", style: TextStyle(fontSize: 25)),
+            SizedBox(height: 10),
+            _TextField(tag: "url", value: parsedChannel.link),
+            SizedBox(height: 15),
+            _TextField(tag: "채널명", value: parsedChannel.name),
+            SizedBox(height: 15),
+            _TextField(tag: "구독자수", value: parsedChannel.subscribers),
+            SizedBox(height: 10),
+            _SelectionBox(
+                tag: "분류", selectedCategoryStream: selectedCategoryStream),
+            SizedBox(height: 50),
+            _AddButton(
+              onTapAddButton: () {
+                onTapAddButton(selectedCategoryStream.value, parsedChannel);
+              },
             ),
-            decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(
-                      20,
-                    ),
-                    topRight: Radius.circular(20))),
-          ),
-        );
-      });
+          ],
+        ),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(
+                  20,
+                ),
+                topRight: Radius.circular(20))),
+      ));
 
   int selectedCategoryIndex = selectedCategoryStream.value;
   selectedCategoryStream.close();
   return selectedCategoryIndex;
 }
 
-class _AddButton extends StatelessWidget {
-  const _AddButton(
-      {Key key,
-      @required this.parsedChannel,
-      @required this.selectedCategoryStream})
-      : super(key: key);
+class ModalBttomSheetForReceivedChanelsArgument {
+  final int categoryIndex;
+  final bool isNewCateogry;
+  final String newCategoryName;
 
-  final Channel parsedChannel;
+  ModalBttomSheetForReceivedChanelsArgument(
+      {this.categoryIndex, this.isNewCateogry, this.newCategoryName});
+}
+
+Future<ModalBttomSheetForReceivedChanelsArgument>
+    showModalBttomSheetForReceivedChanels(BuildContext context) async {
+  BehaviorSubject<int> selectedCategoryStream = BehaviorSubject<int>();
+  TextEditingController newCategoryNameTextEditingController =
+      TextEditingController();
+  bool isNewCategory = false;
+
+  await showModalBttomSheetBase(context,
+      child: ModalBottomSheetForReceivedChannelsScreen(
+        selectedCategoryStream: selectedCategoryStream,
+        newCategoryNameTextEditingController:
+            newCategoryNameTextEditingController,
+        onTapIsSelectedNewCategory: (isNew) {
+          isNewCategory = isNew;
+        },
+      ));
+
+  int selectedCategoryIndex = selectedCategoryStream.value;
+  selectedCategoryStream.close();
+
+  return ModalBttomSheetForReceivedChanelsArgument(
+      categoryIndex: selectedCategoryIndex,
+      isNewCateogry: isNewCategory,
+      newCategoryName: newCategoryNameTextEditingController.text);
+}
+
+class ModalBottomSheetForReceivedChannelsScreen extends StatefulWidget {
+  const ModalBottomSheetForReceivedChannelsScreen({
+    Key key,
+    @required this.selectedCategoryStream,
+    this.newCategoryNameTextEditingController,
+    this.onTapIsSelectedNewCategory,
+  }) : super(key: key);
+
   final BehaviorSubject<int> selectedCategoryStream;
+  final TextEditingController newCategoryNameTextEditingController;
+  final Function onTapIsSelectedNewCategory;
+
+  @override
+  _ModalBottomSheetForReceivedChannelsScreenState createState() =>
+      _ModalBottomSheetForReceivedChannelsScreenState();
+}
+
+class _ModalBottomSheetForReceivedChannelsScreenState
+    extends State<ModalBottomSheetForReceivedChannelsScreen>
+    with TickerProviderStateMixin {
+  bool isSelectedNewCategory = false;
+  AnimationController categoryFieldController;
+  Animation<double> categoryFieldAnimation;
+  AnimationController newCategoryNameFieldController;
+  Animation<double> newCategoryNameFieldAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    prepareAnimations();
+  }
+
+  ///Setting up the animation
+  void prepareAnimations() {
+    categoryFieldController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+    categoryFieldAnimation = CurvedAnimation(
+      parent: categoryFieldController,
+      curve: Curves.fastOutSlowIn,
+    );
+    newCategoryNameFieldController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+    newCategoryNameFieldAnimation = CurvedAnimation(
+      parent: newCategoryNameFieldController,
+      curve: Curves.fastOutSlowIn,
+    );
+    categoryFieldController.forward();
+  }
+
+  @override
+  void dispose() {
+    categoryFieldController.dispose();
+    newCategoryNameFieldController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final _homeViewModel = Provider.of<HomeViewModel>(context);
-    return StreamBuilder<int>(
-        stream: selectedCategoryStream.stream,
-        builder: (context, selectedCategoryIndexSnapshot) {
-          return GestureDetector(
-              onTap: () async {
-                DBAccessResult result = await _homeViewModel.addChannel(
-                    selectedCategoryIndexSnapshot.data, parsedChannel);
+    return Padding(
+      padding: MediaQuery.of(context).viewInsets,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(height: 20),
+            Text("채널 추가하기", style: TextStyle(fontSize: 25)),
+            SizedBox(height: 10),
+            Row(
+              children: [
+                GestureDetector(
+                    onTap: () {
+                      if (isSelectedNewCategory) {
+                        isSelectedNewCategory = false;
+                      } else {
+                        isSelectedNewCategory = true;
+                      }
+                      widget.onTapIsSelectedNewCategory(isSelectedNewCategory);
+                      setState(() {});
+                      if (isSelectedNewCategory) {
+                        categoryFieldController.reverse();
+                        newCategoryNameFieldController.forward();
+                      } else {
+                        categoryFieldController.forward();
+                        newCategoryNameFieldController.reverse();
+                      }
+                    },
+                    child: SelectButton(selected: isSelectedNewCategory)),
+                SizedBox(width: 20),
+                Text("새 카데고리에 추가하기")
+              ],
+            ),
+            SizedBox(height: 30),
+            SizeTransition(
+              axisAlignment: 1.0,
+              sizeFactor: newCategoryNameFieldAnimation,
+              child: _TextField(
+                tag: "새카테고리",
+                value: "",
+                enableTextField: true,
+                textEditingController:
+                    widget.newCategoryNameTextEditingController,
+              ),
+            ),
+            SizeTransition(
+              axisAlignment: 1.0,
+              sizeFactor: categoryFieldAnimation,
+              child: _SelectionBox(
+                  tag: "분류",
+                  selectedCategoryStream: widget.selectedCategoryStream),
+            ),
+            SizedBox(height: 50),
+            _AddButton(
+              onTapAddButton: () {},
+            ),
+          ],
+        ),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(
+                  20,
+                ),
+                topRight: Radius.circular(20))),
+      ),
+    );
+  }
+}
 
-                if (result == DBAccessResult.DUPLICATED_CHANNEL) {
-                  await showDuplicatedChannelDailog(context);
-                  return;
-                } else if (result == DBAccessResult.FAIL) {
-                  await showDBConnectionFailDailog(context);
-                  return;
-                }
+Future<void> showModalBttomSheetBase(BuildContext context,
+    {Widget child}) async {
+  await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Material(
+          color: Colors.transparent,
+          child: child,
+        );
+      });
+}
 
-                Navigator.of(context).pop();
-              },
-              child: Container(
-                  width: 100,
-                  height: 44,
-                  decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                      border: Border.all(width: 1, color: Colors.black)),
-                  child: Center(child: Text("추가"))));
-        });
+class _AddButton extends StatelessWidget {
+  const _AddButton({Key key, @required this.onTapAddButton}) : super(key: key);
+
+  final Function onTapAddButton;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+        onTap: () async {
+          onTapAddButton();
+          Navigator.of(context).pop();
+        },
+        child: Container(
+            width: 100,
+            height: 44,
+            decoration: BoxDecoration(
+                color: Colors.grey,
+                borderRadius: BorderRadius.all(Radius.circular(8)),
+                border: Border.all(width: 1, color: Colors.black)),
+            child: Center(child: Text("추가"))));
   }
 }
 
 class _TextField extends StatelessWidget {
   final String tag;
   final String value;
+  final bool enableTextField;
+  final TextEditingController textEditingController;
 
-  const _TextField({Key key, this.tag, this.value}) : super(key: key);
+  const _TextField(
+      {Key key,
+      this.tag,
+      this.value,
+      this.enableTextField = false,
+      this.textEditingController})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -130,18 +294,26 @@ class _TextField extends StatelessWidget {
             ),
             SizedBox(width: 10),
             Expanded(
-              child: Container(
-                  height: 44,
-                  padding: EdgeInsets.all(4),
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    value,
-                    maxLines: 3,
-                  ),
-                  decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.all(Radius.circular(4)),
-                      border: Border.all(width: 1, color: Colors.black))),
+              child: Stack(
+                children: [
+                  Container(
+                      height: 44,
+                      padding: EdgeInsets.all(4),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        value,
+                        maxLines: 3,
+                      ),
+                      decoration: BoxDecoration(
+                          color: Colors.grey,
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                          border: Border.all(width: 1, color: Colors.black))),
+                  if (enableTextField)
+                    TextField(
+                      controller: textEditingController,
+                    )
+                ],
+              ),
             ),
           ],
         ),

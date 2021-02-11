@@ -34,6 +34,10 @@ class Category {
     return db.Category(id: id, title: title);
   }
 
+  void setId(int id) {
+    this.id = id;
+  }
+
   void setTitle(String newTitle) {
     this.title = newTitle;
   }

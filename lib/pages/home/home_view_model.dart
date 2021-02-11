@@ -79,10 +79,12 @@ class HomeViewModel extends ChangeNotifier {
   Future<DBAccessResult> addCategory(mCategory.Category newCategory) async {
     assert(newCategory != null, newCategory.title != null);
 
+    int id;
+
     try {
       // id 는 auto increment이므로 필수가 아님.
       // ignore: missing_required_param
-      await database.addCategory(db.Category(title: newCategory.title));
+      id = await database.addCategory(db.Category(title: newCategory.title));
     } on SqliteException catch (e) {
       assert(false);
       if (e.extendedResultCode == 2067) {
@@ -93,7 +95,9 @@ class HomeViewModel extends ChangeNotifier {
       return DBAccessResult.FAIL;
     }
 
+    newCategory.setId(id);
     categories.add(newCategory);
+    mCategory.categoryHashMap[id] = [];
 
     notifyListeners();
     return DBAccessResult.SUCCESS;

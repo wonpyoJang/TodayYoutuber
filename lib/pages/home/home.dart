@@ -31,14 +31,37 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     urlReceivedEvent.stream.listen((url) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-        int selectedCategoryIndex =
-            await showModalBttomShsetForAddingChannel(context, url);
+        int selectedCategoryIndex = await showModalBttomSheetForAddingChanel(
+            context, url, (selectedCategoryIndex, parsedChannel) async {
+          // todo : 이 부분은 getUrlWhenStartedBySharingINtent에 들어가는 콜백에서 중복된다.
+          DBAccessResult result = await _homeViewModel.addChannel(
+              selectedCategoryIndex, parsedChannel);
+
+          if (result == DBAccessResult.DUPLICATED_CHANNEL) {
+            await showDuplicatedChannelDailog(context);
+            return;
+          } else if (result == DBAccessResult.FAIL) {
+            await showDBConnectionFailDailog(context);
+            return;
+          }
+        });
         _tabController.animateTo(selectedCategoryIndex);
       });
     });
     _homeViewModel.getUrlWhenStartedBySharingIntent((url) async {
-      int selectedCategoryIndex =
-          await showModalBttomShsetForAddingChannel(context, url);
+      int selectedCategoryIndex = await showModalBttomSheetForAddingChanel(
+          context, url, (selectedCategoryIndex, parsedChannel) async {
+        DBAccessResult result = await _homeViewModel.addChannel(
+            selectedCategoryIndex, parsedChannel);
+
+        if (result == DBAccessResult.DUPLICATED_CHANNEL) {
+          await showDuplicatedChannelDailog(context);
+          return;
+        } else if (result == DBAccessResult.FAIL) {
+          await showDBConnectionFailDailog(context);
+          return;
+        }
+      });
       _tabController.animateTo(selectedCategoryIndex);
     });
 
@@ -57,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     logger.d("[build] HomeScreen");
 
     return Scaffold(
-      appBar: bildAppBar(context),
+      appBar: buildAppBar(context),
       body: buildBody(context),
     );
   }
@@ -150,9 +173,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     setState(() {});
   }
 
-  Widget bildAppBar(BuildContext context) {
+  Widget buildAppBar(BuildContext context) {
     HomeViewModel _homeViewModel =
-        Provider.of<HomeViewModel>(context, listen: false);
+        Provider.of<HomeViewModel>(context, listen: true);
     List<Category> categories = _homeViewModel.categories;
 
     return AppBar(
@@ -252,7 +275,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget buildBody(BuildContext context) {
-    HomeViewModel _homeViewModel = Provider.of<HomeViewModel>(context);
+    HomeViewModel _homeViewModel =
+        Provider.of<HomeViewModel>(context, listen: true);
     List<Category> categories = _homeViewModel.categories;
 
     return TabBarView(
@@ -283,7 +307,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Future<void> addNewCategory(BuildContext context) async {
-    HomeViewModel _homeViewModel = Provider.of<HomeViewModel>(context);
+    HomeViewModel _homeViewModel =
+        Provider.of<HomeViewModel>(context, listen: false);
     List<Category> categories = _homeViewModel.categories;
 
     String newCategoryTitle = await showTextFieldDialog(context);
