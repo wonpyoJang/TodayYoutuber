@@ -1,6 +1,7 @@
 import 'package:TodayYoutuber/common/dialogs.dart';
 import 'package:TodayYoutuber/common/route_manager.dart';
 import 'package:TodayYoutuber/models/category.dart';
+import 'package:TodayYoutuber/models/channel.dart';
 import 'package:TodayYoutuber/models/share_event.dart';
 import 'package:TodayYoutuber/pages/home/home_view_model.dart';
 import 'package:TodayYoutuber/pages/home/widget/bottom_sheet_for_adding_channel.dart';
@@ -226,6 +227,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   Provider.of<SelectShareItemViewModel>(context, listen: false);
 
               shareItemViewModel.categories = categories;
+
+              for (var category in categories) {
+                for (Channel channel in category.channels) {
+                  channel.selected = true;
+                }
+              }
 
               await Navigator.of(context)
                   .pushNamed(RouteLists.selectShareItemScreen);

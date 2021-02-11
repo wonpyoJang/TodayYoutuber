@@ -25,6 +25,8 @@ class SelectShareItemScreen extends StatefulWidget {
 }
 
 class _SelectShareItemScreenState extends State<SelectShareItemScreen> {
+
+  
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<SelectShareItemViewModel>(context);
@@ -99,7 +101,10 @@ class _SelectShareItemScreenState extends State<SelectShareItemScreen> {
               user: User(username: "장원표", jobTitle: "플러터개발자"),
               categories: viewModel.categories);
 
+          shareEvent.categories = shareEvent.getSeletecChannels();
+
           logger.d(shareEvent.toJson());
+
           var shareEventJosn = shareEvent.toJson();
 
           try {
