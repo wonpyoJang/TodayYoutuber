@@ -23,18 +23,23 @@ class SelectShareItemScreen extends StatefulWidget {
 class _SelectShareItemScreenState extends State<SelectShareItemScreen> {
   @override
   Widget build(BuildContext context) {
-    final selectShareItemViewModel =
-        Provider.of<SelectShareItemViewModel>(context);
+    final viewModel = Provider.of<SelectShareItemViewModel>(context);
     return Scaffold(
         appBar: AppBar(title: Text("공유하기")),
         body: Container(
             child: CategoryList(
-                categories: selectShareItemViewModel.categories,
+                categories: viewModel.categories,
                 onSelectCategory: (Category category) {
                   if (category.selected) {
                     category.selected = false;
+                    category.channels.forEach((channel) {
+                      channel.selected = false;
+                    });
                   } else {
                     category.selected = true;
+                    category.channels.forEach((channel) {
+                      channel.selected = true;
+                    });
                   }
                   setState(() {});
                 },
