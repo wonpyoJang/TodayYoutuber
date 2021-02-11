@@ -10,6 +10,7 @@ HashMap<int, List<Channel>> categoryHashMap = HashMap<int, List<Channel>>();
 class Category {
   int id;
   String title;
+  bool selected = false;
 
   get channels => categoryHashMap[id];
   get lengthOfChannel => categoryHashMap[id].length;

@@ -9,6 +9,7 @@ import 'package:TodayYoutuber/pages/home/widget/channel_list.dart';
 import 'package:TodayYoutuber/pages/home/widget/text_field_dialog.dart';
 import 'package:TodayYoutuber/pages/received_channels/received_channels.dart';
 import 'package:TodayYoutuber/pages/received_channels/recevied_channels_view_model.dart';
+import 'package:TodayYoutuber/pages/select_share_item/select_share_item_view_model.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -200,6 +201,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           Text('유랭카'),
           GestureDetector(
             onTap: () async {
+              var shareItemViewModel =
+                  Provider.of<SelectShareItemViewModel>(context, listen: false);
+
+              shareItemViewModel.categories = categories;
+
+              await Navigator.of(context)
+                  .pushNamed(RouteLists.selectShareItemScreen);
+
               String shareKey =
                   "kildong" + DateTime.now().millisecondsSinceEpoch.toString();
 

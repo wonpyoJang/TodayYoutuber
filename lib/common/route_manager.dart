@@ -1,5 +1,6 @@
 import 'package:TodayYoutuber/pages/home/home.dart';
 import 'package:TodayYoutuber/pages/received_channels/received_channels.dart';
+import 'package:TodayYoutuber/pages/select_share_item/select_share_item.dart';
 import 'package:flutter/material.dart';
 
 class RouteManager {
@@ -23,6 +24,13 @@ class RouteManager {
           },
         );
         break;
+      case RouteLists.selectShareItemScreen:
+        return MaterialPageRoute(
+          builder: (context) {
+            return SelectShareItemScreen();
+          },
+        );
+        break;
       default:
         return null;
         break;
@@ -33,4 +41,5 @@ class RouteManager {
 class RouteLists {
   static const String home = '/home';
   static const String receivedChannels = '/received_channels';
+  static const String selectShareItemScreen = '/select_share_item';
 }

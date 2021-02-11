@@ -3,11 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 class ChannelItem extends StatelessWidget {
-  const ChannelItem({Key key, @required this.channel, this.onTapDelete})
+  const ChannelItem(
+      {Key key,
+      @required this.channel,
+      this.onTapDelete,
+      this.isSelectable = false,
+      this.onSelectChannel})
       : super(key: key);
 
   final Channel channel;
   final Function onTapDelete;
+  final bool isSelectable;
+  final Function onSelectChannel;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +39,15 @@ class ChannelItem extends StatelessWidget {
                 ),
                 SizedBox(width: 10),
                 _Body(channel: channel),
+                Expanded(child: Container()),
+                if (this.isSelectable)
+                  GestureDetector(
+                      onTap: () {
+                        if (onSelectChannel != null) {
+                          onSelectChannel(channel);
+                        }
+                      },
+                      child: SelectButton(selected: channel.selected))
               ],
             )),
       ),
@@ -46,6 +62,28 @@ class ChannelItem extends StatelessWidget {
           },
         ),
       ],
+    );
+  }
+}
+
+class SelectButton extends StatelessWidget {
+  const SelectButton({
+    Key key,
+    @required this.selected,
+  }) : super(key: key);
+
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 30,
+      width: 30,
+      child: Icon(Icons.check),
+      decoration: BoxDecoration(
+          color: this.selected ? Colors.yellow : Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(width: 1, color: Colors.orange)),
     );
   }
 }

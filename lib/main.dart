@@ -5,6 +5,7 @@ import 'package:TodayYoutuber/database/database.dart';
 import 'package:TodayYoutuber/pages/home/home.dart';
 import 'package:TodayYoutuber/pages/home/home_view_model.dart';
 import 'package:TodayYoutuber/pages/received_channels/recevied_channels_view_model.dart';
+import 'package:TodayYoutuber/pages/select_share_item/select_share_item_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -70,7 +71,9 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (context) => HomeViewModel(),
         ),
-        ChangeNotifierProvider(create: (context) => ReceivedChannelsViewModel())
+        ChangeNotifierProvider(
+            create: (context) => ReceivedChannelsViewModel()),
+        ChangeNotifierProvider(create: (context) => SelectShareItemViewModel())
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

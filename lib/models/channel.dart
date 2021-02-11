@@ -18,6 +18,7 @@ class Channel {
   int likes;
   bool isLike;
   int categoryId;
+  bool selected = false;
 
   Channel(
       {this.id,
