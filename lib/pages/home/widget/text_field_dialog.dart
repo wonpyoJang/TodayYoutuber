@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
-Future<String> showTextFieldDialog(
-  BuildContext context,
-) async {
+Future<String> showTextFieldDialog(BuildContext context,
+    {String title, String description}) async {
   assert(context != null);
 
   TextEditingController setCategoryNameTextController = TextEditingController();
@@ -45,13 +44,13 @@ Future<String> showTextFieldDialog(
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("카테고리 추가",
+                  Text(title,
                       style: TextStyle(
                         fontSize: 20.0,
                         fontWeight: FontWeight.bold,
                       )),
                   SizedBox(height: 10),
-                  Text("새 카테고리 명을 입력해 주세요"),
+                  Text(description),
                   SizedBox(height: 20),
                   TextField(
                     focusNode: newCategoryNameFocus,

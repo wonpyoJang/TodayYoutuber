@@ -4,6 +4,7 @@ import 'package:TodayYoutuber/models/category.dart';
 import 'package:TodayYoutuber/models/channel.dart';
 import 'package:TodayYoutuber/models/share_event.dart';
 import 'package:TodayYoutuber/models/user.dart';
+import 'package:TodayYoutuber/pages/home/widget/text_field_dialog.dart';
 import 'package:TodayYoutuber/pages/received_channels/widget/category_list.dart';
 import 'package:TodayYoutuber/pages/select_share_item/select_share_item_view_model.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -75,13 +76,22 @@ class _SelectShareItemScreenState extends State<SelectShareItemScreen> {
             if (isShareTappedFlag == true) {
               return;
             }
+
             isShareTappedFlag = true;
             isLoading.add(true);
 
-            String shareKey =
-                "kildong" + DateTime.now().millisecondsSinceEpoch.toString();
+            String name = await showTextFieldDialog(context,
+                title: "이름 입력", description: "공유 링크에 표시할 이름을 입력해주세요!");
 
-            // todo: 이 부분은 추후 다른 페이지로 옮길 예정이므로 viewModel로 따로 빼지 않습니다.
+            if (name == null || name.isEmpty) {
+              isLoading.add(false);
+              isShareTappedFlag = false;
+              return;
+            }
+
+            String shareKey =
+                "$name" + DateTime.now().millisecondsSinceEpoch.toString();
+
             final DynamicLinkParameters parameters = DynamicLinkParameters(
               uriPrefix: 'https://todayyoutuber.page.link',
               link: Uri.parse(
@@ -106,8 +116,8 @@ class _SelectShareItemScreenState extends State<SelectShareItemScreen> {
                 campaignToken: 'example-promo',
               ),
               socialMetaTagParameters: SocialMetaTagParameters(
-                title: '장원표(플러터 개발자)님의 유튜브 구독목록을 확인해보세요!',
-                description: '장원표(플러터 개발자)님의 유튜브 구독목록을 확인해보세요!',
+                title: '$name님의 유튜브 구독목록을 확인해보세요!',
+                description: '$name님의 유튜브 구독목록을 확인해보세요!',
               ),
             );
 
@@ -117,7 +127,7 @@ class _SelectShareItemScreenState extends State<SelectShareItemScreen> {
 
             var shareEvent = ShareEvent(
                 url: shortUrl.toString(),
-                user: User(username: "장원표", jobTitle: "플러터개발자"),
+                user: User(username: "$name", jobTitle: ""),
                 categories: viewModel.categories);
 
             shareEvent.categories = shareEvent.getSeletecChannels();

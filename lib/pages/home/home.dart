@@ -284,7 +284,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     Category category = categories[categoryIndex];
 
     await showCategoryMenu(context, onPressedEdit: () async {
-      String newCategoryTitle = await showTextFieldDialog(context);
+      String newCategoryTitle = await showTextFieldDialog(context,
+          title: "카테고리 추가", description: "새 카테고리 명을 입력해 주세요");
 
       if (newCategoryTitle == null) {
         return;
@@ -357,7 +358,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         Provider.of<HomeViewModel>(context, listen: false);
     List<Category> categories = _homeViewModel.categories;
 
-    String newCategoryTitle = await showTextFieldDialog(context);
+    String newCategoryTitle = await showTextFieldDialog(context,
+        title: "카테고리 추가", description: "새 카테고리 명을 입력해 주세요");
 
     if (newCategoryTitle == null) {
       return;
