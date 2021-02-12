@@ -316,19 +316,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         children: [
           ...categories.map((category) {
             final categoryIndex = categories.indexOf(category);
-            return ChannelList(
-              category: category,
-              onTapDeleteButton: (channelIndex) async {
-                isLoading.add(true);
-                var result = await _homeViewModel.deleteChannel(
-                    categoryIndex, category.channels[channelIndex]);
+            return category.lengthOfChannel < 1
+                ? Info()
+                : ChannelList(
+                    category: category,
+                    onTapDeleteButton: (channelIndex) async {
+                      isLoading.add(true);
+                      var result = await _homeViewModel.deleteChannel(
+                          categoryIndex, category.channels[channelIndex]);
 
-                if (result == DBAccessResult.FAIL) {
-                  showDBConnectionFailDailog(context);
-                }
-                isLoading.add(false);
-              },
-            );
+                      if (result == DBAccessResult.FAIL) {
+                        showDBConnectionFailDailog(context);
+                      }
+                      isLoading.add(false);
+                    },
+                  );
           }),
           Center(
               child: InkWell(
@@ -369,6 +371,117 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       _tabController =
           new TabController(vsync: this, length: categories.length + 1);
     });
+  }
+}
+
+class Info extends StatefulWidget {
+  const Info({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  _InfoState createState() => _InfoState();
+}
+
+class _InfoState extends State<Info> with SingleTickerProviderStateMixin {
+  AnimationController _resizableController;
+
+  @override
+  void initState() {
+    _resizableController = new AnimationController(
+      vsync: this,
+      duration: new Duration(
+        milliseconds: 600,
+      ),
+    );
+    _resizableController.addStatusListener((animationStatus) {
+      switch (animationStatus) {
+        case AnimationStatus.completed:
+          _resizableController.reverse();
+          break;
+        case AnimationStatus.dismissed:
+          _resizableController.forward();
+          break;
+        case AnimationStatus.forward:
+          break;
+        case AnimationStatus.reverse:
+          break;
+      }
+    });
+    _resizableController.forward();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Stack(
+        children: [
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+                width: MediaQuery.of(context).size.width * 0.8,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        fit: BoxFit.fitWidth,
+                        image: NetworkImage(
+                            "https://wonpyojang.github.io/TubeShakerHosting/images/youtube_share_flutter.png")))),
+          ),
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: 290,
+                      color: Colors.black.withOpacity(0.3)),
+                  Row(
+                    children: [
+                      Container(
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          height: 50,
+                          color: Colors.black.withOpacity(0.3)),
+                      Expanded(child: Container()),
+                      Container(
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          height: 50,
+                          color: Colors.black.withOpacity(0.3))
+                    ],
+                  ),
+                  Container(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: 100,
+                      color: Colors.black.withOpacity(0.3)),
+                ],
+              ),
+            ),
+          ),
+          FadeTransition(
+            opacity: _resizableController,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 70),
+                  Align(
+                      alignment: Alignment.center,
+                      child: Icon(
+                        Icons.arrow_downward_rounded,
+                        size: 40,
+                        color: Colors.pink,
+                      )),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

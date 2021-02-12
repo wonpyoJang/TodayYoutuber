@@ -23,7 +23,7 @@ Future<String> showTextFieldDialog(
                 initialData: false,
                 builder: (context, isMoreThanOneStreamSnapshot) {
                   return FlatButton(
-                    color: Colors.red,
+                    color: Colors.pink[200],
                     textColor: isMoreThanOneStreamSnapshot.data
                         ? Colors.white
                         : Colors.grey,
@@ -40,10 +40,16 @@ Future<String> showTextFieldDialog(
           content: Container(
               color: Colors.white,
               width: 100,
-              height: 150,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("카테고리 추가"),
+                  Text("카테고리 추가",
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                      )),
                   SizedBox(height: 10),
                   Text("새 카테고리 명을 입력해 주세요"),
                   SizedBox(height: 20),
