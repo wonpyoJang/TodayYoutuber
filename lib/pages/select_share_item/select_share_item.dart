@@ -121,7 +121,8 @@ class _SelectShareItemScreenState extends State<SelectShareItemScreen> {
         child: Container(
             height: 65,
             color: Colors.green[200],
-            child: Center(child: Text("공유하기"))),
+            child: Center(
+                child: Text("공유하기 ${viewModel.numberOfSelectedItem()}"))),
       ),
     );
   }

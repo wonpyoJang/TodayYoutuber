@@ -48,8 +48,14 @@ class _ReceivedChannelsScreenState extends State<ReceivedChannelsScreen> {
             onSelectCategory: (Category category) {
               if (category.selected) {
                 category.selected = false;
+                category.channels.forEach((channel) {
+                  channel.selected = false;
+                });
               } else {
                 category.selected = true;
+                category.channels.forEach((channel) {
+                  channel.selected = true;
+                });
               }
               setState(() {});
             },
@@ -84,6 +90,13 @@ class _ReceivedChannelsScreenState extends State<ReceivedChannelsScreen> {
               child: Builder(builder: (context) {
                 return GestureDetector(
                   onTap: () async {
+                    if (receivedChannelListViewModel.numberOfSelectedItem() <
+                        1) {
+                      final snackBar = SnackBar(content: Text('선택된 채널이 없습니다.'));
+                      Scaffold.of(context).showSnackBar(snackBar);
+                      return;
+                    }
+
                     final ModalBttomSheetForReceivedChanelsArgument results =
                         await showModalBttomSheetForReceivedChanels(context);
 
@@ -109,15 +122,14 @@ class _ReceivedChannelsScreenState extends State<ReceivedChannelsScreen> {
                     }
                     setState(() {});
 
-                    final snackBar = SnackBar(content: Text('재생목록에 추가되었습니다.'));
-
-// Find the Scaffold in the widget tree and use it to show a SnackBar.
+                    final snackBar = SnackBar(content: Text('채널이 추가되었습니다.'));
                     Scaffold.of(context).showSnackBar(snackBar);
                   },
                   child: Container(
                     color: Colors.green[200],
                     child: Center(
-                      child: Text("추가"),
+                      child: Text(
+                          "추가 (${receivedChannelListViewModel.numberOfSelectedItem()})"),
                     ),
                   ),
                 );

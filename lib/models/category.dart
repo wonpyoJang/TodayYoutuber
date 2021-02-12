@@ -15,6 +15,9 @@ class Category {
   get channels => categoryHashMap[id];
   get lengthOfChannel => categoryHashMap[id].length;
 
+  get selectedChannels =>
+      categoryHashMap[id].where((channel) => channel.selected).toList().length;
+
   Category({
     this.id,
     this.title,

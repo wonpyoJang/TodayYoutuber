@@ -9,10 +9,13 @@ Future<String> showTextFieldDialog(
   TextEditingController setCategoryNameTextController = TextEditingController();
   bool isConfirmed = false;
   PublishSubject<bool> isMoreThanOneCharStream = PublishSubject<bool>();
+  FocusNode newCategoryNameFocus = FocusNode();
 
   await showDialog(
     context: context,
     builder: (context) {
+      FocusScope.of(context).requestFocus(newCategoryNameFocus);
+
       return AlertDialog(
           actions: [
             StreamBuilder<Object>(
@@ -37,16 +40,25 @@ Future<String> showTextFieldDialog(
           content: Container(
               color: Colors.white,
               width: 100,
-              height: 100,
-              child: TextField(
-                controller: setCategoryNameTextController,
-                onChanged: (text) {
-                  if (text.length > 0) {
-                    isMoreThanOneCharStream.add(true);
-                  } else {
-                    isMoreThanOneCharStream.add(false);
-                  }
-                },
+              height: 150,
+              child: Column(
+                children: [
+                  Text("카테고리 추가"),
+                  SizedBox(height: 10),
+                  Text("새 카테고리 명을 입력해 주세요"),
+                  SizedBox(height: 20),
+                  TextField(
+                    focusNode: newCategoryNameFocus,
+                    controller: setCategoryNameTextController,
+                    onChanged: (text) {
+                      if (text.length > 0) {
+                        isMoreThanOneCharStream.add(true);
+                      } else {
+                        isMoreThanOneCharStream.add(false);
+                      }
+                    },
+                  ),
+                ],
               )));
     },
   );

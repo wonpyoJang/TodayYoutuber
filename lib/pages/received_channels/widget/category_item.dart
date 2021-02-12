@@ -84,7 +84,9 @@ class _CategoryItemState extends State<CategoryItem>
                 height: 55.0,
                 child: Stack(
                   children: [
-                    Center(child: Text(widget.category.title)),
+                    Center(
+                        child: Text(widget.category.title +
+                            " (${widget.category.selectedChannels})")),
                     Align(
                         alignment: Alignment.centerRight,
                         child: GestureDetector(

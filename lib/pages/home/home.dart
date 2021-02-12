@@ -125,6 +125,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
         receviedChannelsViewModel.sharedEvent = sharedEvent;
 
+        receviedChannelsViewModel.setSeletedTrue();
+
         isLoading.add(false);
 
         Navigator.pushNamed(context, RouteLists.receivedChannels,
@@ -162,6 +164,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ShareEvent.fromJson(sharedData.value.cast<String, dynamic>());
 
       receviedChannelsViewModel.sharedEvent = sharedEvent;
+
+      receviedChannelsViewModel.setSeletedTrue();
 
       isLoading.add(false);
 
