@@ -26,6 +26,8 @@ class SelectShareItemScreen extends StatefulWidget {
 }
 
 class _SelectShareItemScreenState extends State<SelectShareItemScreen> {
+  bool isShareTappedFlag = false;
+
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<SelectShareItemViewModel>(context);
@@ -62,6 +64,12 @@ class _SelectShareItemScreenState extends State<SelectShareItemScreen> {
       ),
       bottomNavigationBar: GestureDetector(
         onTap: () async {
+          if (isShareTappedFlag == true) {
+            return;
+          }
+          isShareTappedFlag = true;
+          isLoading.add(true);
+
           String shareKey =
               "kildong" + DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -115,6 +123,9 @@ class _SelectShareItemScreenState extends State<SelectShareItemScreen> {
             assert(false);
             return;
           }
+
+          isLoading.add(false);
+          isShareTappedFlag = false;
 
           await Share.share(shortUrl.toString());
         },

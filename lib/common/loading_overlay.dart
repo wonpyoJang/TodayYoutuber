@@ -15,7 +15,9 @@ class LoadingOverlay extends StatelessWidget {
             stream: isLoading.stream,
             builder: (BuildContext context, snapshot) {
               if (snapshot.hasData && snapshot.data == true) {
-                return Center(child: CircularProgressIndicator());
+                return Container(
+                    color: Colors.black.withOpacity(0.3),
+                    child: Center(child: CircularProgressIndicator()));
               } else {
                 return Container();
               }
