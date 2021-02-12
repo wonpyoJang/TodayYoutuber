@@ -62,79 +62,89 @@ class _SelectShareItemScreenState extends State<SelectShareItemScreen> {
               }),
         ),
       ),
-      bottomNavigationBar: GestureDetector(
-        onTap: () async {
-          if (isShareTappedFlag == true) {
-            return;
-          }
-          isShareTappedFlag = true;
-          isLoading.add(true);
+      bottomNavigationBar: Builder(builder: (context) {
+        return GestureDetector(
+          onTap: () async {
+            var numberOfSharedItem = viewModel.numberOfSelectedItem();
+            if (numberOfSharedItem < 1) {
+              final snackBar = SnackBar(content: Text('선택된 채널이 없습니다.'));
+              Scaffold.of(context).showSnackBar(snackBar);
+              return;
+            }
 
-          String shareKey =
-              "kildong" + DateTime.now().millisecondsSinceEpoch.toString();
+            if (isShareTappedFlag == true) {
+              return;
+            }
+            isShareTappedFlag = true;
+            isLoading.add(true);
 
-          // todo: 이 부분은 추후 다른 페이지로 옮길 예정이므로 viewModel로 따로 빼지 않습니다.
-          final DynamicLinkParameters parameters = DynamicLinkParameters(
-            uriPrefix: 'https://todayyoutuber.page.link',
-            link: Uri.parse(
-                'https://todayyoutuber.page.link?shareKey=' + shareKey),
-            androidParameters: AndroidParameters(
-              packageName: 'com.example.TodayYoutuber',
-              minimumVersion: 1,
-            ),
-            iosParameters: IosParameters(
-              bundleId: 'com.example.TodayYoutuber',
-              minimumVersion: '1.0.1',
-              appStoreId: '123456789',
-            ),
-            googleAnalyticsParameters: GoogleAnalyticsParameters(
-              campaign: 'example-promo',
-              medium: 'social',
-              source: 'orkut',
-            ),
-            itunesConnectAnalyticsParameters: ItunesConnectAnalyticsParameters(
-              providerToken: '123456',
-              campaignToken: 'example-promo',
-            ),
-            socialMetaTagParameters: SocialMetaTagParameters(
-              title: '장원표(플러터 개발자)님의 유튜브 구독목록을 확인해보세요!',
-              description: '장원표(플러터 개발자)님의 유튜브 구독목록을 확인해보세요!',
-            ),
-          );
+            String shareKey =
+                "kildong" + DateTime.now().millisecondsSinceEpoch.toString();
 
-          final ShortDynamicLink shortDynamicLink =
-              await parameters.buildShortLink();
-          final Uri shortUrl = shortDynamicLink.shortUrl;
+            // todo: 이 부분은 추후 다른 페이지로 옮길 예정이므로 viewModel로 따로 빼지 않습니다.
+            final DynamicLinkParameters parameters = DynamicLinkParameters(
+              uriPrefix: 'https://todayyoutuber.page.link',
+              link: Uri.parse(
+                  'https://todayyoutuber.page.link?shareKey=' + shareKey),
+              androidParameters: AndroidParameters(
+                packageName: 'com.example.TodayYoutuber',
+                minimumVersion: 1,
+              ),
+              iosParameters: IosParameters(
+                bundleId: 'com.example.TodayYoutuber',
+                minimumVersion: '1.0.1',
+                appStoreId: '123456789',
+              ),
+              googleAnalyticsParameters: GoogleAnalyticsParameters(
+                campaign: 'example-promo',
+                medium: 'social',
+                source: 'orkut',
+              ),
+              itunesConnectAnalyticsParameters:
+                  ItunesConnectAnalyticsParameters(
+                providerToken: '123456',
+                campaignToken: 'example-promo',
+              ),
+              socialMetaTagParameters: SocialMetaTagParameters(
+                title: '장원표(플러터 개발자)님의 유튜브 구독목록을 확인해보세요!',
+                description: '장원표(플러터 개발자)님의 유튜브 구독목록을 확인해보세요!',
+              ),
+            );
 
-          var shareEvent = ShareEvent(
-              url: shortUrl.toString(),
-              user: User(username: "장원표", jobTitle: "플러터개발자"),
-              categories: viewModel.categories);
+            final ShortDynamicLink shortDynamicLink =
+                await parameters.buildShortLink();
+            final Uri shortUrl = shortDynamicLink.shortUrl;
 
-          shareEvent.categories = shareEvent.getSeletecChannels();
+            var shareEvent = ShareEvent(
+                url: shortUrl.toString(),
+                user: User(username: "장원표", jobTitle: "플러터개발자"),
+                categories: viewModel.categories);
 
-          logger.d(shareEvent.toJson());
+            shareEvent.categories = shareEvent.getSeletecChannels();
 
-          var shareEventJosn = shareEvent.toJson();
+            logger.d(shareEvent.toJson());
 
-          try {
-            await databaseReference.child(shareKey).set(shareEventJosn);
-          } catch (e) {
-            assert(false);
-            return;
-          }
+            var shareEventJosn = shareEvent.toJson();
 
-          isLoading.add(false);
-          isShareTappedFlag = false;
+            try {
+              await databaseReference.child(shareKey).set(shareEventJosn);
+            } catch (e) {
+              assert(false);
+              return;
+            }
 
-          await Share.share(shortUrl.toString());
-        },
-        child: Container(
-            height: 65,
-            color: Colors.green[200],
-            child: Center(
-                child: Text("공유하기 (${viewModel.numberOfSelectedItem()})"))),
-      ),
+            isLoading.add(false);
+            isShareTappedFlag = false;
+
+            await Share.share(shortUrl.toString());
+          },
+          child: Container(
+              height: 65,
+              color: Colors.green[200],
+              child: Center(
+                  child: Text("공유하기 (${viewModel.numberOfSelectedItem()})"))),
+        );
+      }),
     );
   }
 }

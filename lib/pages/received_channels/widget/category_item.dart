@@ -85,8 +85,11 @@ class _CategoryItemState extends State<CategoryItem>
                 child: Stack(
                   children: [
                     Center(
-                        child: Text(widget.category.title +
-                            " (${widget.category.selectedChannels})")),
+                        child: Text(
+                            widget.category.title +
+                                " (${widget.category.selectedChannels})",
+                            style: TextStyle(
+                                fontSize: 15.0, fontWeight: FontWeight.bold))),
                     Align(
                         alignment: Alignment.centerRight,
                         child: GestureDetector(

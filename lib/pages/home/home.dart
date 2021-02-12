@@ -551,6 +551,12 @@ class _BlickingBorderButtonState extends State<BlickingBorderButton>
   }
 
   @override
+  void dispose() {
+    _resizableController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
         animation: _resizableController,
