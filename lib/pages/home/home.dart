@@ -199,6 +199,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     List<Category> categories = _homeViewModel.categories;
 
     return AppBar(
+      backgroundColor: Colors.pink[200],
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(40.0),
         child: Align(

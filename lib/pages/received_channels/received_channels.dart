@@ -39,8 +39,9 @@ class _ReceivedChannelsScreenState extends State<ReceivedChannelsScreen> {
     var categories = receivedChannelListViewModel.sharedEvent.categories;
 
     return Scaffold(
-      appBar:
-          AppBar(title: Text("${user.username}(${user.jobTitle})이 공유한 채널 리스트")),
+      appBar: AppBar(
+          backgroundColor: Colors.pink[200],
+          title: Text("${user.username}(${user.jobTitle})이 공유한 채널 리스트")),
       body: LoadingOverlay(
         child: CategoryList(
             enableGoToYoutube: false,

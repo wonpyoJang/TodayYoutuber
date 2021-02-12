@@ -90,9 +90,10 @@ class _WebviewScreenState extends State<WebviewScreen> {
     logger.d("[build] WebviewScreen");
     return Scaffold(
         appBar: AppBar(
+            backgroundColor: Colors.pink[200],
             title: Text(
-          "InAppBrowser",
-        )),
+              "InAppBrowser",
+            )),
         body: Center(
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

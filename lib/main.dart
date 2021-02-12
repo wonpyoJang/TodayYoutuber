@@ -82,7 +82,7 @@ class _MyAppState extends State<MyApp> {
         title: 'Tube Shaker',
         home: HomeScreen(),
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: Colors.pink,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         onGenerateRoute: RouteManager.namesToScreen,

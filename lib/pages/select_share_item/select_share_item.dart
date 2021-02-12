@@ -32,7 +32,7 @@ class _SelectShareItemScreenState extends State<SelectShareItemScreen> {
   Widget build(BuildContext context) {
     final viewModel = Provider.of<SelectShareItemViewModel>(context);
     return Scaffold(
-      appBar: AppBar(title: Text("공유하기")),
+      appBar: AppBar(backgroundColor: Colors.pink[200], title: Text("공유하기")),
       body: LoadingOverlay(
         child: Container(
           child: CategoryList(
@@ -140,9 +140,11 @@ class _SelectShareItemScreenState extends State<SelectShareItemScreen> {
           },
           child: Container(
               height: 65,
-              color: Colors.green[200],
+              color: Colors.pink[100],
               child: Center(
-                  child: Text("공유하기 (${viewModel.numberOfSelectedItem()})"))),
+                  child: Text("공유하기 (${viewModel.numberOfSelectedItem()})",
+                      style: TextStyle(
+                          fontSize: 17.0, fontWeight: FontWeight.bold)))),
         );
       }),
     );
