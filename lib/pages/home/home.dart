@@ -337,8 +337,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     await addNewCategory(context);
                     isLoading.add(false);
                   },
-                  child: Container(
-                      width: 100, height: 100, child: Text("+ 추가하기")))),
+                  child: AddCategoryButtonInBody())),
         ],
       ),
     );
@@ -370,5 +369,69 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       _tabController =
           new TabController(vsync: this, length: categories.length + 1);
     });
+  }
+}
+
+class AddCategoryButtonInBody extends StatefulWidget {
+  const AddCategoryButtonInBody({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  _AddCategoryButtonInBodyState createState() =>
+      _AddCategoryButtonInBodyState();
+}
+
+class _AddCategoryButtonInBodyState extends State<AddCategoryButtonInBody>
+    with SingleTickerProviderStateMixin {
+  AnimationController _resizableController;
+  Animation _colorTween;
+
+  @override
+  void initState() {
+    _resizableController = new AnimationController(
+      vsync: this,
+      duration: new Duration(
+        milliseconds: 600,
+      ),
+    );
+    _resizableController.addStatusListener((animationStatus) {
+      switch (animationStatus) {
+        case AnimationStatus.completed:
+          _resizableController.reverse();
+          break;
+        case AnimationStatus.dismissed:
+          _resizableController.forward();
+          break;
+        case AnimationStatus.forward:
+          break;
+        case AnimationStatus.reverse:
+          break;
+      }
+    });
+    _resizableController.forward();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+        animation: _resizableController,
+        builder: (context, snapshot) {
+          return Container(
+            width: 150,
+            height: 100,
+            child: Center(
+                child: Text("+ 추가하기",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 20.0))),
+            decoration: BoxDecoration(
+                color: Colors.pink[100],
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(
+                    width: 2 + _resizableController.value * 3,
+                    color: Colors.pink[300])),
+          );
+        });
   }
 }
