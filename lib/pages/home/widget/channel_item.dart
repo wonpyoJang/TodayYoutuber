@@ -1,6 +1,7 @@
 import 'package:TodayYoutuber/models/channel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ChannelItem extends StatelessWidget {
   const ChannelItem(
@@ -31,7 +32,7 @@ class ChannelItem extends StatelessWidget {
       child: InkWell(
         onTap: () async {
           if (enableGoToYoutube) {
-            channel.openUrlWithInappBrowser();
+            launch(channel.link);
           }
         },
         child: Container(

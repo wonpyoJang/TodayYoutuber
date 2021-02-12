@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:android_intent/android_intent.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
@@ -255,6 +254,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               shareItemViewModel.categories = categories;
 
               for (var category in categories) {
+                category.selected = true;
                 for (Channel channel in category.channels) {
                   channel.selected = true;
                 }
