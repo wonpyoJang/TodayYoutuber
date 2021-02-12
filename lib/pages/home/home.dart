@@ -1,6 +1,15 @@
+import 'dart:io';
+
+import 'package:android_intent/android_intent.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:TodayYoutuber/common/dialogs.dart';
 import 'package:TodayYoutuber/common/loading_overlay.dart';
 import 'package:TodayYoutuber/common/route_manager.dart';
+import 'package:TodayYoutuber/main.dart';
 import 'package:TodayYoutuber/models/category.dart';
 import 'package:TodayYoutuber/models/channel.dart';
 import 'package:TodayYoutuber/models/share_event.dart';
@@ -11,11 +20,7 @@ import 'package:TodayYoutuber/pages/home/widget/text_field_dialog.dart';
 import 'package:TodayYoutuber/pages/received_channels/received_channels.dart';
 import 'package:TodayYoutuber/pages/received_channels/recevied_channels_view_model.dart';
 import 'package:TodayYoutuber/pages/select_share_item/select_share_item_view_model.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:TodayYoutuber/main.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -339,7 +344,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     await addNewCategory(context);
                     isLoading.add(false);
                   },
-                  child: AddCategoryButtonInBody())),
+                  child: BlickingBorderButton(
+                      title: "+추가하기", width: 150, height: 100))),
         ],
       ),
     );
@@ -414,91 +420,109 @@ class _InfoState extends State<Info> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Stack(
-        children: [
-          Align(
-            alignment: Alignment.center,
-            child: Container(
-                width: MediaQuery.of(context).size.width * 0.8,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        fit: BoxFit.fitWidth,
-                        image: NetworkImage(
-                            "https://wonpyojang.github.io/TubeShakerHosting/images/youtube_share_flutter.png")))),
+    return Stack(
+      children: [
+        Align(
+          alignment: Alignment.topCenter,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  height: MediaQuery.of(context).size.width * 0.8 * (640 / 551),
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          fit: BoxFit.fitWidth,
+                          image: NetworkImage(
+                              "https://wonpyojang.github.io/TubeShakerHosting/images/youtube_share_flutter.png")))),
+              SizedBox(height: 20),
+              GestureDetector(
+                  onTap: () async {
+                    if (Platform.isAndroid) {
+                      launch("https://www.youtube.com/");
+                    } else {}
+                  },
+                  child: BlickingBorderButton(
+                      title: "유튜브 바로가기", width: 200, height: 75)),
+            ],
           ),
-          Align(
-            alignment: Alignment.center,
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.8,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      height: 290,
-                      color: Colors.black.withOpacity(0.3)),
-                  Row(
-                    children: [
-                      Container(
-                          width: MediaQuery.of(context).size.width * 0.3,
-                          height: 50,
-                          color: Colors.black.withOpacity(0.3)),
-                      Expanded(child: Container()),
-                      Container(
-                          width: MediaQuery.of(context).size.width * 0.3,
-                          height: 50,
-                          color: Colors.black.withOpacity(0.3))
-                    ],
-                  ),
-                  Container(
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      height: 100,
-                      color: Colors.black.withOpacity(0.3)),
-                ],
-              ),
+        ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    height: 260,
+                    color: Colors.black.withOpacity(0.3)),
+                Row(
+                  children: [
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.3,
+                        height: 50,
+                        color: Colors.black.withOpacity(0.3)),
+                    Expanded(child: Container()),
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.3,
+                        height: 50,
+                        color: Colors.black.withOpacity(0.3))
+                  ],
+                ),
+                Container(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    height: 80,
+                    color: Colors.black.withOpacity(0.3)),
+              ],
             ),
           ),
-          FadeTransition(
-            opacity: _resizableController,
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(height: 70),
-                  Align(
-                      alignment: Alignment.center,
-                      child: Icon(
-                        Icons.arrow_downward_rounded,
-                        size: 40,
-                        color: Colors.pink,
-                      )),
-                ],
-              ),
+        ),
+        FadeTransition(
+          opacity: _resizableController,
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: 200),
+                Align(
+                    alignment: Alignment.center,
+                    child: Icon(
+                      Icons.arrow_downward_rounded,
+                      size: 40,
+                      color: Colors.pink,
+                    )),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
 
-class AddCategoryButtonInBody extends StatefulWidget {
-  const AddCategoryButtonInBody({
+class BlickingBorderButton extends StatefulWidget {
+  const BlickingBorderButton({
     Key key,
+    this.title,
+    this.width,
+    this.height,
   }) : super(key: key);
+  final String title;
+  final double width;
+  final double height;
 
   @override
-  _AddCategoryButtonInBodyState createState() =>
-      _AddCategoryButtonInBodyState();
+  _BlickingBorderButtonState createState() => _BlickingBorderButtonState();
 }
 
-class _AddCategoryButtonInBodyState extends State<AddCategoryButtonInBody>
+class _BlickingBorderButtonState extends State<BlickingBorderButton>
     with SingleTickerProviderStateMixin {
   AnimationController _resizableController;
-  Animation _colorTween;
 
   @override
   void initState() {
@@ -532,10 +556,10 @@ class _AddCategoryButtonInBodyState extends State<AddCategoryButtonInBody>
         animation: _resizableController,
         builder: (context, snapshot) {
           return Container(
-            width: 150,
-            height: 100,
+            width: widget.width,
+            height: widget.height,
             child: Center(
-                child: Text("+ 추가하기",
+                child: Text(widget.title,
                     style: TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 20.0))),
             decoration: BoxDecoration(
