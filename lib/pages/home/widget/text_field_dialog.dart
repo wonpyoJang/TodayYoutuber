@@ -57,6 +57,12 @@ Future<String> showTextFieldDialog(
                         isMoreThanOneCharStream.add(false);
                       }
                     },
+                    onSubmitted: (text) {
+                      if (text.length > 0) {
+                        isConfirmed = true;
+                        Navigator.of(context).pop();
+                      }
+                    },
                   ),
                 ],
               )));

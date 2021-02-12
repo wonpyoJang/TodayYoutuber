@@ -79,7 +79,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (context) => SelectShareItemViewModel())
       ],
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Tube Shaker',
         home: HomeScreen(),
         theme: ThemeData(
           primarySwatch: Colors.blue,

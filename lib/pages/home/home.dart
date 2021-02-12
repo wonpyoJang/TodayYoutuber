@@ -239,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('유랭카'),
+          Text('Tube Shaker'),
           GestureDetector(
             onTap: () async {
               isLoading.add(true);
