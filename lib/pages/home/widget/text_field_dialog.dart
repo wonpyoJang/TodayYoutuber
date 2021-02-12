@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 Future<String> showTextFieldDialog(BuildContext context,
     {String title, String description}) async {
@@ -26,7 +27,7 @@ Future<String> showTextFieldDialog(BuildContext context,
                     textColor: isMoreThanOneStreamSnapshot.data
                         ? Colors.white
                         : Colors.grey,
-                    child: Text("확인"),
+                    child: Text("submit".tr().toString()),
                     onPressed: () {
                       if (isMoreThanOneStreamSnapshot.data) {
                         isConfirmed = true;

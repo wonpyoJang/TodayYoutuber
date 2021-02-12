@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:TodayYoutuber/models/category.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 Future<void> showDBConnectionFailDailog(BuildContext context) async {
   await _showErrorDialog(context, "내부 DB 연결 실패(client)",
@@ -35,7 +36,7 @@ Future<void> _showErrorDialog(
         ),
         actions: <Widget>[
           TextButton(
-            child: Text('확인'),
+            child: Text('submit'.tr().toString()),
             onPressed: () {
               Navigator.of(context).pop();
             },
@@ -69,7 +70,7 @@ Future<void> showSelectFromCategories(
                           color: Colors.red,
                           height: 44,
                           width: 44,
-                          child: Center(child: Text("확인"))),
+                          child: Center(child: Text("submit".tr().toString()))),
                     ),
                   ],
                 ),
@@ -102,13 +103,13 @@ Future<void> showCategoryMenu(BuildContext context,
           await onPressedEdit();
           Navigator.of(context).pop();
         },
-        child: Text("편집")),
+        child: Text("edit".tr().toString())),
     CupertinoActionSheetAction(
         onPressed: () async {
           await onPressedDelete();
           Navigator.of(context).pop();
         },
-        child: Text("삭제"))
+        child: Text("delete".tr().toString()))
   ]);
 }
 
@@ -124,7 +125,7 @@ Future<void> showCupertinoSelectionMenu(BuildContext context, String title,
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text("취소")),
+              child: Text("cancel".tr().toString())),
         );
       });
 }

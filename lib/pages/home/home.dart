@@ -20,6 +20,7 @@ import 'package:TodayYoutuber/pages/received_channels/received_channels.dart';
 import 'package:TodayYoutuber/pages/received_channels/recevied_channels_view_model.dart';
 import 'package:TodayYoutuber/pages/select_share_item/select_share_item_view_model.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -236,7 +237,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       child: Container(
                           height: 40,
                           width: 70,
-                          child: Center(child: Text("+ 추가하기"))))),
+                          child: Center(child: Text("add".tr().toString()))))),
             ],
           ),
         ),
@@ -244,7 +245,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('Tube Shaker'),
+          Text('title'.tr().toString()),
           GestureDetector(
             onTap: () async {
               isLoading.add(true);
@@ -285,7 +286,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     await showCategoryMenu(context, onPressedEdit: () async {
       String newCategoryTitle = await showTextFieldDialog(context,
-          title: "카테고리 추가", description: "새 카테고리 명을 입력해 주세요");
+          title: "addCategory".tr().toString(),
+          description: "addCategoryDesc".tr().toString());
 
       if (newCategoryTitle == null) {
         return;
@@ -347,7 +349,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     isLoading.add(false);
                   },
                   child: BlickingBorderButton(
-                      title: "+추가하기", width: 150, height: 100))),
+                      title: "add".tr().toString(), width: 150, height: 100))),
         ],
       ),
     );
@@ -359,7 +361,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     List<Category> categories = _homeViewModel.categories;
 
     String newCategoryTitle = await showTextFieldDialog(context,
-        title: "카테고리 추가", description: "새 카테고리 명을 입력해 주세요");
+        title: "addCategory".tr().toString(),
+        description: "addCategoryDesc".tr().toString());
 
     if (newCategoryTitle == null) {
       return;
@@ -446,7 +449,9 @@ class _InfoState extends State<Info> with SingleTickerProviderStateMixin {
                     } else {}
                   },
                   child: BlickingBorderButton(
-                      title: "유튜브 바로가기", width: 200, height: 75)),
+                      title: "goToYoutube".tr().toString(),
+                      width: 200,
+                      height: 75)),
             ],
           ),
         ),

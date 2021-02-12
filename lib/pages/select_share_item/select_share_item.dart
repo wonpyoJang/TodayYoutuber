@@ -11,6 +11,7 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SelectShareItemArgument {
   final ShareEvent sharedEvent;
@@ -33,7 +34,9 @@ class _SelectShareItemScreenState extends State<SelectShareItemScreen> {
   Widget build(BuildContext context) {
     final viewModel = Provider.of<SelectShareItemViewModel>(context);
     return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.pink[200], title: Text("공유하기")),
+      appBar: AppBar(
+          backgroundColor: Colors.pink[200],
+          title: Text("share".tr().toString())),
       body: LoadingOverlay(
         child: Container(
           child: CategoryList(
@@ -68,7 +71,8 @@ class _SelectShareItemScreenState extends State<SelectShareItemScreen> {
           onTap: () async {
             var numberOfSharedItem = viewModel.numberOfSelectedItem();
             if (numberOfSharedItem < 1) {
-              final snackBar = SnackBar(content: Text('선택된 채널이 없습니다.'));
+              final snackBar = SnackBar(
+                  content: Text('noSelectedChannelError'.tr().toString()));
               Scaffold.of(context).showSnackBar(snackBar);
               return;
             }
@@ -152,7 +156,9 @@ class _SelectShareItemScreenState extends State<SelectShareItemScreen> {
               height: 65,
               color: Colors.pink[100],
               child: Center(
-                  child: Text("공유하기 (${viewModel.numberOfSelectedItem()})",
+                  child: Text(
+                      "share".tr().toString() +
+                          " (${viewModel.numberOfSelectedItem()})",
                       style: TextStyle(
                           fontSize: 17.0, fontWeight: FontWeight.bold)))),
         );

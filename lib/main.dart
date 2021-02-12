@@ -13,6 +13,7 @@ import 'package:logger/logger.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 final PublishSubject<String> urlReceivedEvent = PublishSubject<String>();
 
@@ -31,8 +32,11 @@ final isLoading = BehaviorSubject<bool>();
 
 void main() {
   database = MyDatabase();
-
-  runApp(MyApp());
+  runApp(EasyLocalization(
+      supportedLocales: [Locale('en', 'US'), Locale('ko', 'KR')],
+      path: 'assets/translations',
+      fallbackLocale: Locale('en', 'US'),
+      child: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -79,13 +83,16 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (context) => SelectShareItemViewModel())
       ],
       child: MaterialApp(
-        title: 'Tube Shaker',
+        title: 'title'.tr().toString(),
         home: HomeScreen(),
         theme: ThemeData(
           primarySwatch: Colors.pink,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         onGenerateRoute: RouteManager.namesToScreen,
+        localizationsDelegates: context.localizationDelegates,
+        locale: context.locale,
+        supportedLocales: context.supportedLocales,
       ),
     );
   }

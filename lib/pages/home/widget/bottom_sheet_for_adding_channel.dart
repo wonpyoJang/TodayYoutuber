@@ -9,6 +9,7 @@ import 'package:TodayYoutuber/models/category.dart';
 import 'package:TodayYoutuber/models/channel.dart';
 import 'package:TodayYoutuber/pages/home/home_view_model.dart';
 import 'package:TodayYoutuber/pages/home/widget/channel_item.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 Future<int> showModalBttomSheetForAddingChanel(
     BuildContext context, String value, Function onTapAddButton) async {
@@ -27,16 +28,20 @@ Future<int> showModalBttomSheetForAddingChanel(
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(height: 20),
-            Text("채널 추가하기", style: TextStyle(fontSize: 25)),
+            Text("addChannel".tr().toString(), style: TextStyle(fontSize: 25)),
             SizedBox(height: 10),
-            _TextField(tag: "url", value: parsedChannel.link),
+            _TextField(tag: "url".tr().toString(), value: parsedChannel.link),
             SizedBox(height: 15),
-            _TextField(tag: "채널명", value: parsedChannel.name),
+            _TextField(
+                tag: "channelName".tr().toString(), value: parsedChannel.name),
             SizedBox(height: 15),
-            _TextField(tag: "구독자수", value: parsedChannel.subscribers),
+            _TextField(
+                tag: "numberOfSubscribers".tr().toString(),
+                value: parsedChannel.subscribers),
             SizedBox(height: 10),
             _SelectionBox(
-                tag: "분류", selectedCategoryStream: selectedCategoryStream),
+                tag: "category".tr().toString(),
+                selectedCategoryStream: selectedCategoryStream),
             SizedBox(height: 50),
             _AddButton(
               onTapAddButton: () {
@@ -160,7 +165,7 @@ class _ModalBottomSheetForReceivedChannelsScreenState
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(height: 20),
-            Text("채널 추가하기", style: TextStyle(fontSize: 25)),
+            Text("addChannel".tr().toString(), style: TextStyle(fontSize: 25)),
             SizedBox(height: 10),
             Row(
               children: [
@@ -183,7 +188,7 @@ class _ModalBottomSheetForReceivedChannelsScreenState
                     },
                     child: SelectButton(selected: isSelectedNewCategory)),
                 SizedBox(width: 20),
-                Text("새 카데고리에 추가하기")
+                Text("addToNewCategory".tr().toString())
               ],
             ),
             SizedBox(height: 30),
@@ -191,7 +196,7 @@ class _ModalBottomSheetForReceivedChannelsScreenState
               axisAlignment: 1.0,
               sizeFactor: newCategoryNameFieldAnimation,
               child: _TextField(
-                tag: "새카테고리",
+                tag: "newCategory".tr().toString(),
                 value: "",
                 enableTextField: true,
                 textEditingController:
@@ -202,7 +207,7 @@ class _ModalBottomSheetForReceivedChannelsScreenState
               axisAlignment: 1.0,
               sizeFactor: categoryFieldAnimation,
               child: _SelectionBox(
-                  tag: "분류",
+                  tag: "category".tr().toString(),
                   selectedCategoryStream: widget.selectedCategoryStream),
             ),
             SizedBox(height: 50),
@@ -256,7 +261,7 @@ class _AddButton extends StatelessWidget {
                 color: Colors.grey,
                 borderRadius: BorderRadius.all(Radius.circular(8)),
                 border: Border.all(width: 1, color: Colors.black)),
-            child: Center(child: Text("추가"))));
+            child: Center(child: Text("submit".tr().toString()))));
   }
 }
 
@@ -334,7 +339,7 @@ class _SelectionBox extends StatefulWidget {
 }
 
 class __SelectionBoxState extends State<_SelectionBox> {
-  String value = "선택하기";
+  String value = "selection".tr().toString();
 
   @override
   Widget build(BuildContext context) {

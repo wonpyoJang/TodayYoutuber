@@ -10,6 +10,7 @@ import 'package:TodayYoutuber/pages/received_channels/recevied_channels_view_mod
 import 'package:TodayYoutuber/pages/received_channels/widget/category_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ReceivedChannelsArgument {
   final ShareEvent sharedEvent;
@@ -41,7 +42,8 @@ class _ReceivedChannelsScreenState extends State<ReceivedChannelsScreen> {
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Colors.pink[200],
-          title: Text("${user.username}님이 공유한 채널 리스트")),
+          title:
+              Text("${user.username}" + "sharedChannelListOf".tr().toString())),
       body: LoadingOverlay(
         child: CategoryList(
             enableGoToYoutube: false,
@@ -82,7 +84,7 @@ class _ReceivedChannelsScreenState extends State<ReceivedChannelsScreen> {
                 child: Container(
                   color: Colors.red[100],
                   child: Center(
-                    child: Text("나가기"),
+                    child: Text("exit".tr().toString()),
                   ),
                 ),
               ),
@@ -93,7 +95,9 @@ class _ReceivedChannelsScreenState extends State<ReceivedChannelsScreen> {
                   onTap: () async {
                     if (receivedChannelListViewModel.numberOfSelectedItem() <
                         1) {
-                      final snackBar = SnackBar(content: Text('선택된 채널이 없습니다.'));
+                      final snackBar = SnackBar(
+                          content:
+                              Text('noSelectedChannelError'.tr().toString()));
                       Scaffold.of(context).showSnackBar(snackBar);
                       return;
                     }
@@ -123,7 +127,8 @@ class _ReceivedChannelsScreenState extends State<ReceivedChannelsScreen> {
                     }
                     setState(() {});
 
-                    final snackBar = SnackBar(content: Text('채널이 추가되었습니다.'));
+                    final snackBar = SnackBar(
+                        content: Text('channelAddedMsg'.tr().toString()));
                     Scaffold.of(context).showSnackBar(snackBar);
                   },
                   child: Container(
