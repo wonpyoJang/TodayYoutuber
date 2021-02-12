@@ -2,7 +2,7 @@ import 'package:TodayYoutuber/models/category.dart';
 import 'package:TodayYoutuber/pages/home/widget/channel_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:TodayYoutuber/main.dart';
+import 'package:TodayYoutuber/global.dart';
 
 class CategoryItem extends StatefulWidget {
   const CategoryItem(

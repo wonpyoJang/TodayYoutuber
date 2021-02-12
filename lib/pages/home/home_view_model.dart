@@ -5,7 +5,7 @@ import 'package:TodayYoutuber/database/database.dart' as db;
 import 'package:TodayYoutuber/models/channel.dart' as mChannel;
 import 'package:flutter/material.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
-import 'package:TodayYoutuber/main.dart';
+import 'package:TodayYoutuber/global.dart';
 // ignore: implementation_imports
 import 'package:sqlite3/src/api/exception.dart';
 

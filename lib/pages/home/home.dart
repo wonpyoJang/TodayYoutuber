@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:TodayYoutuber/common/dialogs.dart';
 import 'package:TodayYoutuber/common/loading_overlay.dart';
 import 'package:TodayYoutuber/common/route_manager.dart';
-import 'package:TodayYoutuber/main.dart';
+import 'package:TodayYoutuber/global.dart';
 import 'package:TodayYoutuber/models/category.dart';
 import 'package:TodayYoutuber/models/channel.dart';
 import 'package:TodayYoutuber/models/share_event.dart';

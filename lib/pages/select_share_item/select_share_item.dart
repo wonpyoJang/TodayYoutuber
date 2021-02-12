@@ -1,5 +1,6 @@
 import 'package:TodayYoutuber/common/loading_overlay.dart';
-import 'package:TodayYoutuber/main.dart';
+import 'package:TodayYoutuber/env/environment.dart';
+import 'package:TodayYoutuber/global.dart';
 import 'package:TodayYoutuber/models/category.dart';
 import 'package:TodayYoutuber/models/channel.dart';
 import 'package:TodayYoutuber/models/share_event.dart';
@@ -97,11 +98,11 @@ class _SelectShareItemScreenState extends State<SelectShareItemScreen> {
                 "$name" + DateTime.now().millisecondsSinceEpoch.toString();
 
             final DynamicLinkParameters parameters = DynamicLinkParameters(
-              uriPrefix: 'https://todayyoutuber.page.link',
+              uriPrefix: Environment.dynamicLinkUrl,
               link: Uri.parse(
-                  'https://todayyoutuber.page.link?shareKey=' + shareKey),
+                  '${Environment.dynamicLinkUrl}?shareKey=' + shareKey),
               androidParameters: AndroidParameters(
-                packageName: 'com.example.TodayYoutuber',
+                packageName: Environment.packageName,
                 minimumVersion: 1,
               ),
               iosParameters: IosParameters(

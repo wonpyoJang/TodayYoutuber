@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:TodayYoutuber/main.dart';
+import 'package:TodayYoutuber/global.dart';
 import 'package:TodayYoutuber/models/category.dart';
 import 'package:TodayYoutuber/pages/home/widget/channel_item.dart';
 

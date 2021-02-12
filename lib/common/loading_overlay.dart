@@ -1,4 +1,4 @@
-import 'package:TodayYoutuber/main.dart';
+import 'package:TodayYoutuber/global.dart';
 import 'package:flutter/material.dart';
 
 class LoadingOverlay extends StatelessWidget {

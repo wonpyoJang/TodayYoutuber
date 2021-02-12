@@ -1,7 +1,7 @@
 import 'package:TodayYoutuber/models/category.dart';
 import 'package:TodayYoutuber/pages/received_channels/widget/category_item.dart';
 import 'package:flutter/material.dart';
-import 'package:TodayYoutuber/main.dart';
+import 'package:TodayYoutuber/global.dart';
 
 class CategoryList extends StatefulWidget {
   const CategoryList(

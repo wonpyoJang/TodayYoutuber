@@ -1,5 +1,5 @@
 import 'package:TodayYoutuber/models/channel.dart';
-import 'package:TodayYoutuber/main.dart';
+import 'package:TodayYoutuber/global.dart';
 import 'dart:collection';
 import 'package:TodayYoutuber/database/database.dart' as db;
 import 'dart:convert';

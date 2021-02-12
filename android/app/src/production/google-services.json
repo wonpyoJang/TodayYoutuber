@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "801180954633",
+    "project_id": "todayrprod",
+    "storage_bucket": "todayrprod.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:801180954633:android:5180b98116814bd51348d8",
+        "android_client_info": {
+          "package_name": "com.example.TodayYoutuber"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "801180954633-60k9f9n67jn0u9hbn2el6l0juipcsqlf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxEC8KP3bS8TC3-Q9RlD4WE6bKkKjhEuM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "801180954633-60k9f9n67jn0u9hbn2el6l0juipcsqlf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
