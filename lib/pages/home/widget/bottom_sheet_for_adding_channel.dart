@@ -171,6 +171,11 @@ class __SelectionBoxState extends State<_SelectionBox> {
 
     return GestureDetector(
       onTap: () async {
+        // 초기값
+        value = categories[0].title;
+        widget.selectedCategoryStream.add(0);
+        setState(() {});
+
         await showSelectFromCategories(context, categories,
             onSelect: (category) {
           value = category.title;

@@ -44,6 +44,9 @@ dependencies:
   
   rxdart:
   share: ^0.6.5+4
+  firebase_dynamic_links: ^0.7.0+1
+  firebase_core: ^0.7.0
+  firebase_database: ^6.0.0
 
 dev_dependencies:
   flutter_test:

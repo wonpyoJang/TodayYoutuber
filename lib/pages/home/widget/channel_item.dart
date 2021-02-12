@@ -1,28 +1,23 @@
-import 'package:TodayYoutuber/common/dialogs.dart';
-import 'package:TodayYoutuber/pages/home/home_view_model.dart';
+import 'package:TodayYoutuber/models/channel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:provider/provider.dart';
-import 'package:TodayYoutuber/main.dart';
 
 class ChannelItem extends StatelessWidget {
-  const ChannelItem({
-    Key key,
-    @required this.categoryIndex,
-    @required this.channelIndex,
-  }) : super(key: key);
+  const ChannelItem(
+      {Key key,
+      @required this.channel,
+      this.onTapDelete,
+      this.isSelectable = false,
+      this.onSelectChannel})
+      : super(key: key);
 
-  final int categoryIndex;
-  final int channelIndex;
+  final Channel channel;
+  final Function onTapDelete;
+  final bool isSelectable;
+  final Function onSelectChannel;
 
   @override
   Widget build(BuildContext context) {
-    logger.d("[build] ChannelItem");
-    assert(channelIndex != null && channelIndex >= 0);
-
-    final _homeViewModel = Provider.of<HomeViewModel>(context);
-    final channel = _homeViewModel.getChannels(categoryIndex)[channelIndex];
-
     assert(channel != null);
 
     return Slidable(
@@ -40,17 +35,19 @@ class ChannelItem extends StatelessWidget {
             child: Row(
               children: [
                 _ThumbNail(
-                  categoryIndex: categoryIndex,
-                  channelIndex: channelIndex,
+                  channel: channel,
                 ),
                 SizedBox(width: 10),
-                _Body(categoryIndex: categoryIndex, channelIndex: channelIndex),
-                Expanded(child: SizedBox()),
-                _LikeButton(
-                  categoryIndex: categoryIndex,
-                  channelIndex: channelIndex,
-                ),
-                SizedBox(width: 15)
+                _Body(channel: channel),
+                Expanded(child: Container()),
+                if (this.isSelectable)
+                  GestureDetector(
+                      onTap: () {
+                        if (onSelectChannel != null) {
+                          onSelectChannel(channel);
+                        }
+                      },
+                      child: SelectButton(selected: channel.selected))
               ],
             )),
       ),
@@ -61,12 +58,7 @@ class ChannelItem extends StatelessWidget {
           color: Colors.red,
           icon: Icons.delete,
           onTap: () async {
-            var result =
-                await _homeViewModel.deleteChannel(categoryIndex, channel);
-
-            if (result == DBAccessResult.FAIL) {
-              showDBConnectionFailDailog(context);
-            }
+            onTapDelete();
           },
         ),
       ],
@@ -74,56 +66,36 @@ class ChannelItem extends StatelessWidget {
   }
 }
 
-class _LikeButton extends StatelessWidget {
-  const _LikeButton({
+class SelectButton extends StatelessWidget {
+  const SelectButton({
     Key key,
-    @required this.categoryIndex,
-    @required this.channelIndex,
+    @required this.selected,
   }) : super(key: key);
 
-  final int categoryIndex;
-  final int channelIndex;
+  final bool selected;
 
   @override
   Widget build(BuildContext context) {
-    assert(channelIndex != null && channelIndex >= 0);
-
-    final vm = Provider.of<HomeViewModel>(context);
-    final channel = vm.getChannels(categoryIndex)[channelIndex];
-
-    assert(channel != null);
-
-    return GestureDetector(
-        onTap: () {
-          logger.d("[touch event] like button");
-          vm.toggleLike(0, channelIndex);
-        },
-        child: Container(
-            child: Icon(channel.isLike
-                ? Icons.favorite_rounded
-                : Icons.favorite_border)));
+    return Container(
+      height: 30,
+      width: 30,
+      child: Icon(Icons.check),
+      decoration: BoxDecoration(
+          color: this.selected ? Colors.yellow : Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(width: 1, color: Colors.orange)),
+    );
   }
 }
 
 class _Body extends StatelessWidget {
-  const _Body({
-    Key key,
-    @required this.categoryIndex,
-    @required this.channelIndex,
-  }) : super(key: key);
+  const _Body({Key key, @required this.channel}) : super(key: key);
 
-  final int categoryIndex;
-  final int channelIndex;
+  final Channel channel;
 
   @override
   Widget build(BuildContext context) {
-    assert(channelIndex != null && channelIndex >= 0);
-
-    final vm = Provider.of<HomeViewModel>(context);
-    final channel = vm.getChannels(categoryIndex)[channelIndex];
-
     assert(channel != null);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -135,23 +107,12 @@ class _Body extends StatelessWidget {
 }
 
 class _ThumbNail extends StatelessWidget {
-  const _ThumbNail({
-    Key key,
-    @required this.categoryIndex,
-    @required this.channelIndex,
-  }) : super(key: key);
+  const _ThumbNail({Key key, @required this.channel}) : super(key: key);
 
-  final int categoryIndex;
-  final int channelIndex;
+  final Channel channel;
 
   @override
   Widget build(BuildContext context) {
-    assert(channelIndex != null && channelIndex >= 0);
-
-    final vm = Provider.of<HomeViewModel>(context);
-    final channel = vm.getChannels(categoryIndex)[channelIndex];
-
-    assert(vm != null);
     assert(channel != null);
 
     return CircleAvatar(

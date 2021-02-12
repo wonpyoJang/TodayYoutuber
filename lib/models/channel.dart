@@ -8,7 +8,7 @@ import 'package:TodayYoutuber/database/database.dart' as db;
 
 part 'channel.g.dart';
 
-@JsonSerializable(nullable: true)
+@JsonSerializable(nullable: true, explicitToJson: true)
 class Channel {
   int id;
   final String name;
@@ -18,6 +18,7 @@ class Channel {
   int likes;
   bool isLike;
   int categoryId;
+  bool selected = false;
 
   Channel(
       {this.id,
