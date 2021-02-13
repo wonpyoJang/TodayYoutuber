@@ -16,7 +16,7 @@ Channel _$ChannelFromJson(Map<String, dynamic> json) {
     likes: json['likes'] as int,
     isLike: json['isLike'] as bool,
     categoryId: json['categoryId'] as int,
-  );
+  )..selected = json['selected'] as bool;
 }
 
 Map<String, dynamic> _$ChannelToJson(Channel instance) => <String, dynamic>{
@@ -28,4 +28,5 @@ Map<String, dynamic> _$ChannelToJson(Channel instance) => <String, dynamic>{
       'likes': instance.likes,
       'isLike': instance.isLike,
       'categoryId': instance.categoryId,
+      'selected': instance.selected,
     };
