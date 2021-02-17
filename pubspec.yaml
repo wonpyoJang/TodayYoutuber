@@ -46,9 +46,10 @@ dependencies:
   
   rxdart:
   share: ^0.6.5+4
-  firebase_dynamic_links: 
-  firebase_core:
+  firebase_dynamic_links:
+  firebase_core: "0.5.0+1"
   firebase_database:
+  firebase_analytics: "5.0.16"
   
 
 dev_dependencies:

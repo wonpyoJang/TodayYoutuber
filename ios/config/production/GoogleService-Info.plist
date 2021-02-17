@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>801180954633-22huoe3ih43eh16fuvi8vjo0ul4jnfdh.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.801180954633-22huoe3ih43eh16fuvi8vjo0ul4jnfdh</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAlDgjL6nrS5Zlfkl9bMKm-fRZnOgIF_go</string>
+	<key>GCM_SENDER_ID</key>
+	<string>801180954633</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.gmail.TodayYoutuber</string>
+	<key>PROJECT_ID</key>
+	<string>todayrprod</string>
+	<key>STORAGE_BUCKET</key>
+	<string>todayrprod.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:801180954633:ios:a8d21225a77f01461348d8</string>
+	<key>DATABASE_URL</key>
+	<string>https://todayrprod-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>

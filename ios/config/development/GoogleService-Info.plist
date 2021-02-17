@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1019315322511-7b2bpj6cbfm3j1ao49k9544e8bo6260i.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1019315322511-7b2bpj6cbfm3j1ao49k9544e8bo6260i</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>1019315322511-uaihcr58td0veerqn71g4ssmj98lp0ga.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDHymFN_onyXzOztVnbi69yr1NFZPaou5w</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1019315322511</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.gmail.TodayYoutuberDev</string>
+	<key>PROJECT_ID</key>
+	<string>todayrdev</string>
+	<key>STORAGE_BUCKET</key>
+	<string>todayrdev.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1019315322511:ios:8321bc5721481a1e22fafa</string>
+	<key>DATABASE_URL</key>
+	<string>https://todayrdev-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>
