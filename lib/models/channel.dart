@@ -3,7 +3,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'package:TodayYoutuber/common/my_in_app_browser.dart';
-import 'package:TodayYoutuber/main.dart';
+import 'package:TodayYoutuber/global.dart';
 import 'package:TodayYoutuber/database/database.dart' as db;
 
 part 'channel.g.dart';

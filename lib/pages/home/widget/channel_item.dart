@@ -1,6 +1,7 @@
 import 'package:TodayYoutuber/models/channel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ChannelItem extends StatelessWidget {
   const ChannelItem(
@@ -8,26 +9,36 @@ class ChannelItem extends StatelessWidget {
       @required this.channel,
       this.onTapDelete,
       this.isSelectable = false,
-      this.onSelectChannel})
+      this.onSelectChannel,
+      this.enableGoToYoutube,
+      this.isSlidable = true})
       : super(key: key);
 
   final Channel channel;
   final Function onTapDelete;
   final bool isSelectable;
   final Function onSelectChannel;
+  final bool enableGoToYoutube;
+  final bool isSlidable;
 
   @override
   Widget build(BuildContext context) {
     assert(channel != null);
 
     return Slidable(
+      enabled: isSlidable,
       actionPane: SlidableDrawerActionPane(),
       actionExtentRatio: 0.15,
       child: InkWell(
         onTap: () async {
-          channel.openUrlWithInappBrowser();
+          if (enableGoToYoutube) {
+            launch(channel.link);
+          }
         },
         child: Container(
+            color: isSelectable && channel.selected
+                ? Colors.yellow[100]
+                : Colors.white,
             padding: EdgeInsets.symmetric(
               horizontal: 16.0,
               vertical: 15.0,

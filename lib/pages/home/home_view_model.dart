@@ -5,7 +5,7 @@ import 'package:TodayYoutuber/database/database.dart' as db;
 import 'package:TodayYoutuber/models/channel.dart' as mChannel;
 import 'package:flutter/material.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
-import 'package:TodayYoutuber/main.dart';
+import 'package:TodayYoutuber/global.dart';
 // ignore: implementation_imports
 import 'package:sqlite3/src/api/exception.dart';
 
@@ -13,6 +13,11 @@ enum DBAccessResult { SUCCESS, DUPLICATED_CATEGORY, DUPLICATED_CHANNEL, FAIL }
 
 class HomeViewModel extends ChangeNotifier {
   List<mCategory.Category> categories = [];
+
+  void clear() {
+    categories.clear();
+    mCategory.categoryHashMap.clear();
+  }
 
   void getUrlWhenStartedBySharingIntent(Function onReceiveSharingIntent) {
     ReceiveSharingIntent.getInitialText().then((String value) {
@@ -62,6 +67,11 @@ class HomeViewModel extends ChangeNotifier {
     for (var i = 0; i < results.length; ++i) {
       var channel = results[i];
 
+      if (false ==
+          mCategory.categoryHashMap.containsKey(results[i].categoryId)) {
+        continue;
+      }
+
       mCategory.categoryHashMap[results[i].categoryId].add(mChannel.Channel(
           id: channel.id,
           name: channel.name,
@@ -79,10 +89,12 @@ class HomeViewModel extends ChangeNotifier {
   Future<DBAccessResult> addCategory(mCategory.Category newCategory) async {
     assert(newCategory != null, newCategory.title != null);
 
+    int id;
+
     try {
       // id 는 auto increment이므로 필수가 아님.
       // ignore: missing_required_param
-      await database.addCategory(db.Category(title: newCategory.title));
+      id = await database.addCategory(db.Category(title: newCategory.title));
     } on SqliteException catch (e) {
       assert(false);
       if (e.extendedResultCode == 2067) {
@@ -91,9 +103,13 @@ class HomeViewModel extends ChangeNotifier {
     } catch (e) {
       assert(false);
       return DBAccessResult.FAIL;
+    } finally {
+      isLoading.add(false);
     }
 
+    newCategory.setId(id);
     categories.add(newCategory);
+    mCategory.categoryHashMap[id] = [];
 
     notifyListeners();
     return DBAccessResult.SUCCESS;
@@ -102,6 +118,10 @@ class HomeViewModel extends ChangeNotifier {
   // * 카테고리
   Future<DBAccessResult> deleteCategory(mCategory.Category category) async {
     assert(category != null, category.title != null);
+
+    for (var channel in category.channels) {
+      await deleteChannel(categories.indexOf(category), channel);
+    }
 
     try {
       // id 는 auto increment이므로 필수가 아님.

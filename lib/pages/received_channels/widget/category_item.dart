@@ -2,7 +2,7 @@ import 'package:TodayYoutuber/models/category.dart';
 import 'package:TodayYoutuber/pages/home/widget/channel_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:TodayYoutuber/main.dart';
+import 'package:TodayYoutuber/global.dart';
 
 class CategoryItem extends StatefulWidget {
   const CategoryItem(
@@ -11,7 +11,8 @@ class CategoryItem extends StatefulWidget {
       this.expand,
       this.onTapCategory,
       this.onSelectCategory,
-      this.onSelectChannel})
+      this.onSelectChannel,
+      this.enableGoToYoutube = true})
       : super(key: key);
 
   final Category category;
@@ -19,6 +20,7 @@ class CategoryItem extends StatefulWidget {
   final bool expand;
   final Function onSelectCategory;
   final Function onSelectChannel;
+  final bool enableGoToYoutube;
 
   @override
   _CategoryItemState createState() => _CategoryItemState();
@@ -76,11 +78,18 @@ class _CategoryItemState extends State<CategoryItem>
             actionPane: SlidableDrawerActionPane(),
             actionExtentRatio: 0.15,
             child: Container(
-                color: Colors.grey,
+                color: widget.category.selected
+                    ? Colors.grey[500]
+                    : Colors.grey[400],
                 height: 55.0,
                 child: Stack(
                   children: [
-                    Center(child: Text(widget.category.title)),
+                    Center(
+                        child: Text(
+                            widget.category.title +
+                                " (${widget.category.selectedChannels})",
+                            style: TextStyle(
+                                fontSize: 15.0, fontWeight: FontWeight.bold))),
                     Align(
                         alignment: Alignment.centerRight,
                         child: GestureDetector(
@@ -106,6 +115,8 @@ class _CategoryItemState extends State<CategoryItem>
           axisAlignment: 1.0,
           sizeFactor: animation,
           child: ChannelList(
+            isSlidable: false,
+            enableGoToYoutube: widget.enableGoToYoutube,
             onSelectChannel: widget.onSelectChannel,
             isSelectable: true,
             category: widget.category,

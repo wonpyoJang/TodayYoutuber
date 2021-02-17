@@ -1,5 +1,5 @@
 import 'package:TodayYoutuber/models/channel.dart';
-import 'package:TodayYoutuber/main.dart';
+import 'package:TodayYoutuber/global.dart';
 import 'dart:collection';
 import 'package:TodayYoutuber/database/database.dart' as db;
 import 'dart:convert';
@@ -14,6 +14,9 @@ class Category {
 
   get channels => categoryHashMap[id];
   get lengthOfChannel => categoryHashMap[id].length;
+
+  get selectedChannels =>
+      categoryHashMap[id].where((channel) => channel.selected).toList().length;
 
   Category({
     this.id,
@@ -32,6 +35,10 @@ class Category {
 
   db.Category toDbModel() {
     return db.Category(id: id, title: title);
+  }
+
+  void setId(int id) {
+    this.id = id;
   }
 
   void setTitle(String newTitle) {

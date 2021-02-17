@@ -1,8 +1,17 @@
+import 'dart:io';
+
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:TodayYoutuber/common/dialogs.dart';
+import 'package:TodayYoutuber/common/loading_overlay.dart';
 import 'package:TodayYoutuber/common/route_manager.dart';
+import 'package:TodayYoutuber/global.dart';
 import 'package:TodayYoutuber/models/category.dart';
+import 'package:TodayYoutuber/models/channel.dart';
 import 'package:TodayYoutuber/models/share_event.dart';
-import 'package:TodayYoutuber/models/user.dart';
 import 'package:TodayYoutuber/pages/home/home_view_model.dart';
 import 'package:TodayYoutuber/pages/home/widget/bottom_sheet_for_adding_channel.dart';
 import 'package:TodayYoutuber/pages/home/widget/channel_list.dart';
@@ -10,12 +19,8 @@ import 'package:TodayYoutuber/pages/home/widget/text_field_dialog.dart';
 import 'package:TodayYoutuber/pages/received_channels/received_channels.dart';
 import 'package:TodayYoutuber/pages/received_channels/recevied_channels_view_model.dart';
 import 'package:TodayYoutuber/pages/select_share_item/select_share_item_view_model.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:TodayYoutuber/main.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -26,6 +31,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   TabController _tabController;
 
   void initState() {
+    this.getDatasFromDB(context);
     logger.d("[initState] HomeScreen");
     super.initState();
     HomeViewModel _homeViewModel =
@@ -33,14 +39,38 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     urlReceivedEvent.stream.listen((url) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-        int selectedCategoryIndex =
-            await showModalBttomShsetForAddingChannel(context, url);
+        isLoading.add(false);
+        int selectedCategoryIndex = await showModalBttomSheetForAddingChanel(
+            context, url, (selectedCategoryIndex, parsedChannel) async {
+          // todo : 이 부분은 getUrlWhenStartedBySharingINtent에 들어가는 콜백에서 중복된다.
+          DBAccessResult result = await _homeViewModel.addChannel(
+              selectedCategoryIndex, parsedChannel);
+
+          if (result == DBAccessResult.DUPLICATED_CHANNEL) {
+            await showDuplicatedChannelDailog(context);
+            return;
+          } else if (result == DBAccessResult.FAIL) {
+            await showDBConnectionFailDailog(context);
+            return;
+          }
+        });
         _tabController.animateTo(selectedCategoryIndex);
       });
     });
     _homeViewModel.getUrlWhenStartedBySharingIntent((url) async {
-      int selectedCategoryIndex =
-          await showModalBttomShsetForAddingChannel(context, url);
+      int selectedCategoryIndex = await showModalBttomSheetForAddingChanel(
+          context, url, (selectedCategoryIndex, parsedChannel) async {
+        DBAccessResult result = await _homeViewModel.addChannel(
+            selectedCategoryIndex, parsedChannel);
+
+        if (result == DBAccessResult.DUPLICATED_CHANNEL) {
+          await showDuplicatedChannelDailog(context);
+          return;
+        } else if (result == DBAccessResult.FAIL) {
+          await showDBConnectionFailDailog(context);
+          return;
+        }
+      });
       _tabController.animateTo(selectedCategoryIndex);
     });
 
@@ -50,8 +80,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         length: _homeViewModel.categories.length + 1,
         vsync: this,
         initialIndex: 0);
-
-    this.getDatasFromDB(context);
   }
 
   @override
@@ -59,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     logger.d("[build] HomeScreen");
 
     return Scaffold(
-      appBar: bildAppBar(context),
+      appBar: buildAppBar(context),
       body: buildBody(context),
     );
   }
@@ -76,6 +104,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     FirebaseDynamicLinks.instance.onLink(
         onSuccess: (PendingDynamicLinkData dynamicLink) async {
+      isLoading.add(true);
+
       final Uri deepLink = dynamicLink?.link;
 
       if (deepLink != null) {
@@ -100,6 +130,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
         receviedChannelsViewModel.sharedEvent = sharedEvent;
 
+        receviedChannelsViewModel.setSeletedTrue();
+
+        isLoading.add(false);
+
         Navigator.pushNamed(context, RouteLists.receivedChannels,
             arguments: ReceivedChannelsArgument(sharedEvent: sharedEvent));
       }
@@ -113,6 +147,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     final Uri deepLink = data?.link;
 
     if (deepLink != null) {
+      isLoading.add(true);
+
       DataSnapshot sharedData = await databaseReference
           .child(deepLink.queryParameters["shareKey"])
           .once();
@@ -134,6 +170,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
       receviedChannelsViewModel.sharedEvent = sharedEvent;
 
+      receviedChannelsViewModel.setSeletedTrue();
+
+      isLoading.add(false);
+
       Navigator.pushNamed(context, RouteLists.receivedChannels,
           arguments: ReceivedChannelsArgument(sharedEvent: sharedEvent));
     }
@@ -144,20 +184,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         Provider.of<HomeViewModel>(context, listen: false);
     List<Category> categories = _homeViewModel.categories;
 
-    await _homeViewModel.getCategoriesFromDB();
-    await _homeViewModel.getChannelsFromDB();
-
+    _homeViewModel.clear();
+    try {
+      await _homeViewModel.getCategoriesFromDB();
+      await _homeViewModel.getChannelsFromDB();
+    } catch (_) {}
     _tabController = TabController(vsync: this, length: categories.length + 1);
 
     setState(() {});
   }
 
-  Widget bildAppBar(BuildContext context) {
+  Widget buildAppBar(BuildContext context) {
     HomeViewModel _homeViewModel =
-        Provider.of<HomeViewModel>(context, listen: false);
+        Provider.of<HomeViewModel>(context, listen: true);
     List<Category> categories = _homeViewModel.categories;
 
     return AppBar(
+      backgroundColor: Colors.pink[200],
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(40.0),
         child: Align(
@@ -186,11 +229,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               }),
               Tab(
                   child: InkWell(
-                      onTap: () => addNewCategory(context),
+                      onTap: () async {
+                        isLoading.add(true);
+                        await addNewCategory(context);
+                        isLoading.add(false);
+                      },
                       child: Container(
                           height: 40,
                           width: 70,
-                          child: Center(child: Text("+ 추가하기"))))),
+                          child: Center(child: Text("add".tr().toString()))))),
             ],
           ),
         ),
@@ -198,70 +245,27 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('유랭카'),
+          Text('title'.tr().toString()),
           GestureDetector(
             onTap: () async {
+              isLoading.add(true);
+
               var shareItemViewModel =
                   Provider.of<SelectShareItemViewModel>(context, listen: false);
 
               shareItemViewModel.categories = categories;
 
-              await Navigator.of(context)
-                  .pushNamed(RouteLists.selectShareItemScreen);
-
-              String shareKey =
-                  "kildong" + DateTime.now().millisecondsSinceEpoch.toString();
-
-              // todo: 이 부분은 추후 다른 페이지로 옮길 예정이므로 viewModel로 따로 빼지 않습니다.
-              final DynamicLinkParameters parameters = DynamicLinkParameters(
-                uriPrefix: 'https://todayyoutuber.page.link',
-                link: Uri.parse(
-                    'https://todayyoutuber.page.link?shareKey=' + shareKey),
-                androidParameters: AndroidParameters(
-                  packageName: 'com.example.TodayYoutuber',
-                  minimumVersion: 1,
-                ),
-                iosParameters: IosParameters(
-                  bundleId: 'com.example.TodayYoutuber',
-                  minimumVersion: '1.0.1',
-                  appStoreId: '123456789',
-                ),
-                googleAnalyticsParameters: GoogleAnalyticsParameters(
-                  campaign: 'example-promo',
-                  medium: 'social',
-                  source: 'orkut',
-                ),
-                itunesConnectAnalyticsParameters:
-                    ItunesConnectAnalyticsParameters(
-                  providerToken: '123456',
-                  campaignToken: 'example-promo',
-                ),
-                socialMetaTagParameters: SocialMetaTagParameters(
-                  title: '장원표(플러터 개발자)님의 유튜브 구독목록을 확인해보세요!',
-                  description: '장원표(플러터 개발자)님의 유튜브 구독목록을 확인해보세요!',
-                ),
-              );
-
-              final ShortDynamicLink shortDynamicLink =
-                  await parameters.buildShortLink();
-              final Uri shortUrl = shortDynamicLink.shortUrl;
-
-              var shareEvent = ShareEvent(
-                  url: shortUrl.toString(),
-                  user: User(username: "장원표", jobTitle: "플러터개발자"),
-                  categories: categories);
-
-              logger.d(shareEvent.toJson());
-              var shareEventJosn = shareEvent.toJson();
-
-              try {
-                await databaseReference.child(shareKey).set(shareEventJosn);
-              } catch (e) {
-                assert(false);
-                return;
+              for (var category in categories) {
+                category.selected = true;
+                for (Channel channel in category.channels) {
+                  channel.selected = true;
+                }
               }
 
-              await Share.share(shortUrl.toString());
+              isLoading.add(false);
+
+              await Navigator.of(context)
+                  .pushNamed(RouteLists.selectShareItemScreen);
             },
             child: Container(
                 width: 44,
@@ -281,7 +285,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     Category category = categories[categoryIndex];
 
     await showCategoryMenu(context, onPressedEdit: () async {
-      String newCategoryTitle = await showTextFieldDialog(context);
+      String newCategoryTitle = await showTextFieldDialog(context,
+          title: "addCategory".tr().toString(),
+          description: "addCategoryDesc".tr().toString());
 
       if (newCategoryTitle == null) {
         return;
@@ -308,41 +314,55 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   Widget buildBody(BuildContext context) {
-    HomeViewModel _homeViewModel = Provider.of<HomeViewModel>(context);
+    HomeViewModel _homeViewModel =
+        Provider.of<HomeViewModel>(context, listen: true);
     List<Category> categories = _homeViewModel.categories;
 
-    return TabBarView(
-      controller: _tabController,
-      physics: NeverScrollableScrollPhysics(),
-      children: [
-        ...categories.map((category) {
-          final categoryIndex = categories.indexOf(category);
-          return ChannelList(
-            category: category,
-            onTapDeleteButton: (channelIndex) async {
-              var result = await _homeViewModel.deleteChannel(
-                  categoryIndex, category.channels[channelIndex]);
+    return LoadingOverlay(
+      child: TabBarView(
+        controller: _tabController,
+        physics: NeverScrollableScrollPhysics(),
+        children: [
+          ...categories.map((category) {
+            final categoryIndex = categories.indexOf(category);
+            return category.lengthOfChannel < 1
+                ? Info()
+                : ChannelList(
+                    category: category,
+                    onTapDeleteButton: (channelIndex) async {
+                      isLoading.add(true);
+                      var result = await _homeViewModel.deleteChannel(
+                          categoryIndex, category.channels[channelIndex]);
 
-              if (result == DBAccessResult.FAIL) {
-                showDBConnectionFailDailog(context);
-              }
-            },
-          );
-        }),
-        Center(
-            child: InkWell(
-                onTap: () => addNewCategory(context),
-                child:
-                    Container(width: 100, height: 100, child: Text("+ 추가하기")))),
-      ],
+                      if (result == DBAccessResult.FAIL) {
+                        showDBConnectionFailDailog(context);
+                      }
+                      isLoading.add(false);
+                    },
+                  );
+          }),
+          Center(
+              child: InkWell(
+                  onTap: () async {
+                    isLoading.add(true);
+                    await addNewCategory(context);
+                    isLoading.add(false);
+                  },
+                  child: BlickingBorderButton(
+                      title: "add".tr().toString(), width: 150, height: 100))),
+        ],
+      ),
     );
   }
 
   Future<void> addNewCategory(BuildContext context) async {
-    HomeViewModel _homeViewModel = Provider.of<HomeViewModel>(context);
+    HomeViewModel _homeViewModel =
+        Provider.of<HomeViewModel>(context, listen: false);
     List<Category> categories = _homeViewModel.categories;
 
-    String newCategoryTitle = await showTextFieldDialog(context);
+    String newCategoryTitle = await showTextFieldDialog(context,
+        title: "addCategory".tr().toString(),
+        description: "addCategoryDesc".tr().toString());
 
     if (newCategoryTitle == null) {
       return;
@@ -363,5 +383,206 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       _tabController =
           new TabController(vsync: this, length: categories.length + 1);
     });
+  }
+}
+
+class Info extends StatefulWidget {
+  const Info({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  _InfoState createState() => _InfoState();
+}
+
+class _InfoState extends State<Info> with SingleTickerProviderStateMixin {
+  AnimationController _resizableController;
+
+  @override
+  void initState() {
+    _resizableController = new AnimationController(
+      vsync: this,
+      duration: new Duration(
+        milliseconds: 600,
+      ),
+    );
+    _resizableController.addStatusListener((animationStatus) {
+      switch (animationStatus) {
+        case AnimationStatus.completed:
+          _resizableController.reverse();
+          break;
+        case AnimationStatus.dismissed:
+          _resizableController.forward();
+          break;
+        case AnimationStatus.forward:
+          break;
+        case AnimationStatus.reverse:
+          break;
+      }
+    });
+    _resizableController.forward();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Align(
+          alignment: Alignment.topCenter,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  height: MediaQuery.of(context).size.width * 0.8 * (640 / 551),
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          fit: BoxFit.fitWidth,
+                          image: NetworkImage(
+                              "https://wonpyojang.github.io/TubeShakerHosting/images/youtube_share_flutter.png")))),
+              SizedBox(height: 20),
+              GestureDetector(
+                  onTap: () async {
+                    if (Platform.isAndroid) {
+                      launch("https://www.youtube.com/");
+                    } else {}
+                  },
+                  child: BlickingBorderButton(
+                      title: "goToYoutube".tr().toString(),
+                      width: 200,
+                      height: 75)),
+            ],
+          ),
+        ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    height: 260,
+                    color: Colors.black.withOpacity(0.3)),
+                Row(
+                  children: [
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.3,
+                        height: 50,
+                        color: Colors.black.withOpacity(0.3)),
+                    Expanded(child: Container()),
+                    Container(
+                        width: MediaQuery.of(context).size.width * 0.3,
+                        height: 50,
+                        color: Colors.black.withOpacity(0.3))
+                  ],
+                ),
+                Container(
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    height: 80,
+                    color: Colors.black.withOpacity(0.3)),
+              ],
+            ),
+          ),
+        ),
+        FadeTransition(
+          opacity: _resizableController,
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: 200),
+                Align(
+                    alignment: Alignment.center,
+                    child: Icon(
+                      Icons.arrow_downward_rounded,
+                      size: 40,
+                      color: Colors.pink,
+                    )),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class BlickingBorderButton extends StatefulWidget {
+  const BlickingBorderButton({
+    Key key,
+    this.title,
+    this.width,
+    this.height,
+  }) : super(key: key);
+  final String title;
+  final double width;
+  final double height;
+
+  @override
+  _BlickingBorderButtonState createState() => _BlickingBorderButtonState();
+}
+
+class _BlickingBorderButtonState extends State<BlickingBorderButton>
+    with SingleTickerProviderStateMixin {
+  AnimationController _resizableController;
+
+  @override
+  void initState() {
+    _resizableController = new AnimationController(
+      vsync: this,
+      duration: new Duration(
+        milliseconds: 600,
+      ),
+    );
+    _resizableController.addStatusListener((animationStatus) {
+      switch (animationStatus) {
+        case AnimationStatus.completed:
+          _resizableController.reverse();
+          break;
+        case AnimationStatus.dismissed:
+          _resizableController.forward();
+          break;
+        case AnimationStatus.forward:
+          break;
+        case AnimationStatus.reverse:
+          break;
+      }
+    });
+    _resizableController.forward();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _resizableController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+        animation: _resizableController,
+        builder: (context, snapshot) {
+          return Container(
+            width: widget.width,
+            height: widget.height,
+            child: Center(
+                child: Text(widget.title,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 20.0))),
+            decoration: BoxDecoration(
+                color: Colors.pink[100],
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(
+                    width: 2 + _resizableController.value * 3,
+                    color: Colors.pink[300])),
+          );
+        });
   }
 }

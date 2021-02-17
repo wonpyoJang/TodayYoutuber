@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:TodayYoutuber/main.dart';
+import 'package:TodayYoutuber/global.dart';
 
 class MyInAppBrowser extends InAppBrowser {
   @override
@@ -90,9 +90,10 @@ class _WebviewScreenState extends State<WebviewScreen> {
     logger.d("[build] WebviewScreen");
     return Scaffold(
         appBar: AppBar(
+            backgroundColor: Colors.pink[200],
             title: Text(
-          "InAppBrowser",
-        )),
+              "InAppBrowser",
+            )),
         body: Center(
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
