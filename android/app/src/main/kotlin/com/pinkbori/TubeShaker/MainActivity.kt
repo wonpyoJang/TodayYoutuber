@@ -1,4 +1,4 @@
-package com.example.TodayYoutuber
+package com.pinkbori.TubeShaker
 
 import android.os.Bundle
 import io.flutter.embedding.android.FlutterActivity
