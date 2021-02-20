@@ -1,48 +1,10 @@
-import 'dart:async';
-import 'dart:convert';
-
 import 'package:TodayYoutuber/app.dart';
+import 'package:TodayYoutuber/common/admob.dart';
 import 'package:TodayYoutuber/database/database.dart';
 import 'package:TodayYoutuber/global.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:admob_flutter/admob_flutter.dart';
-import 'package:flutter/services.dart' show rootBundle;
-
-class Keys {
-  String ios;
-  String android;
-
-  Keys({this.android, this.ios});
-}
-
-class AdmobKey {
-  static Keys bannerAdUnitId;
-
-  static Future<void> loadAdmobKey({bool isTest = false}) async {
-    String result;
-    var parsed;
-
-    try{
-      if (false == isTest) {
-        result = await rootBundle.loadString('assets/admob/id.json');
-        parsed = json.decode(result);
-      }
-    } catch(_) {
-
-    }
-
-    if(isTest) {
-      bannerAdUnitId = Keys(android:
-      'ca-app-pub-3940256099942544/6300978111');
-    } else {
-      bannerAdUnitId = Keys(android: parsed["BannerAdUnitId"]["android"]
-      );
-    }
-
-    return;
-  }
-}
 
 enum BuildType {
   development,
@@ -79,7 +41,7 @@ class Environment {
   void run() async {
     WidgetsFlutterBinding.ensureInitialized();
     Admob.initialize();
-    await AdmobKey.loadAdmobKey(isTest: true);
+    await AdmobManager.loadAdmobKey(isTest: true);
     database = MyDatabase();
     runApp(EasyLocalization(
         supportedLocales: [Locale('en', 'US'), Locale('ko', 'KR')],
