@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:admob_flutter/admob_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,86 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   TabController _tabController;
 
+  GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
+  AdmobBannerSize bannerSize;
+  AdmobInterstitial interstitialAd;
+  AdmobReward rewardAd;
+
+  void showSnackBar(String content) {
+    scaffoldState.currentState.showSnackBar(
+      SnackBar(
+        content: Text(content),
+        duration: Duration(milliseconds: 1500),
+      ),
+    );
+  }
+
+  void handleEvent(
+      AdmobAdEvent event, Map<String, dynamic> args, String adType) {
+    switch (event) {
+      case AdmobAdEvent.loaded:
+        showSnackBar('New Admob $adType Ad loaded!');
+        break;
+      case AdmobAdEvent.opened:
+        showSnackBar('Admob $adType Ad opened!');
+        break;
+      case AdmobAdEvent.closed:
+        showSnackBar('Admob $adType Ad closed!');
+        break;
+      case AdmobAdEvent.failedToLoad:
+        showSnackBar('Admob $adType failed to load. :(');
+        break;
+      case AdmobAdEvent.rewarded:
+        showDialog(
+          context: scaffoldState.currentContext,
+          builder: (BuildContext context) {
+            return WillPopScope(
+              child: AlertDialog(
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text('Reward callback fired. Thanks Andrew!'),
+                    Text('Type: ${args['type']}'),
+                    Text('Amount: ${args['amount']}'),
+                  ],
+                ),
+              ),
+              onWillPop: () async {
+                scaffoldState.currentState.hideCurrentSnackBar();
+                return true;
+              },
+            );
+          },
+        );
+        break;
+      default:
+    }
+  }
+
   void initState() {
+
+
+    bannerSize = AdmobBannerSize.BANNER;
+
+    interstitialAd = AdmobInterstitial(
+      adUnitId: getInterstitialAdUnitId(),
+      listener: (AdmobAdEvent event, Map<String, dynamic> args) {
+        if (event == AdmobAdEvent.closed) interstitialAd.load();
+        handleEvent(event, args, 'Interstitial');
+      },
+    );
+
+    rewardAd = AdmobReward(
+      adUnitId: getRewardBasedVideoAdUnitId(),
+      listener: (AdmobAdEvent event, Map<String, dynamic> args) {
+        if (event == AdmobAdEvent.closed) rewardAd.load();
+        handleEvent(event, args, 'Reward');
+      },
+    );
+
+    interstitialAd.load();
+    rewardAd.load();
+
     this.getDatasFromDB(context);
     logger.d("[initState] HomeScreen");
     super.initState();
@@ -95,6 +175,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void dispose() {
     logger.d("[dispse] HomeScreen");
+    interstitialAd.dispose();
+    rewardAd.dispose();
     super.dispose();
   }
 
@@ -327,19 +409,41 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             final categoryIndex = categories.indexOf(category);
             return category.lengthOfChannel < 1
                 ? Info()
-                : ChannelList(
-                    category: category,
-                    onTapDeleteButton: (channelIndex) async {
-                      isLoading.add(true);
-                      var result = await _homeViewModel.deleteChannel(
-                          categoryIndex, category.channels[channelIndex]);
+                : Column(
+                  children: [
+                    ChannelList(
+                        category: category,
+                        onTapDeleteButton: (channelIndex) async {
+                          isLoading.add(true);
+                          var result = await _homeViewModel.deleteChannel(
+                              categoryIndex, category.channels[channelIndex]);
 
-                      if (result == DBAccessResult.FAIL) {
-                        showDBConnectionFailDailog(context);
-                      }
-                      isLoading.add(false);
-                    },
-                  );
+                          if (result == DBAccessResult.FAIL) {
+                            showDBConnectionFailDailog(context);
+                          }
+                          isLoading.add(false);
+                        },
+                      ),
+                    Container(
+                      color: Colors.yellow,
+                      child: AdmobBanner(
+                        adUnitId: getBannerAdUnitId(),
+                        adSize: bannerSize,
+                        listener: (AdmobAdEvent event,
+                            Map<String, dynamic> args) {
+                          handleEvent(event, args, 'Banner');
+                        },
+                        onBannerCreated:
+                            (AdmobBannerController controller) {
+                          // Dispose is called automatically for you when Flutter removes the banner from the widget tree.
+                          // Normally you don't need to worry about disposing this yourself, it's handled.
+                          // If you need direct access to dispose, this is your guy!
+                          // controller.dispose();
+                        },
+                      ),
+                    ),
+                  ],
+                );
           }),
           Center(
               child: InkWell(
@@ -585,4 +689,32 @@ class _BlickingBorderButtonState extends State<BlickingBorderButton>
           );
         });
   }
+}
+
+String getBannerAdUnitId({bool isTest = true}) {
+  String testAdId = "ca-app-pub-3940256099942544/6300978111";
+  if (Platform.isIOS) {
+    return isTest ? 'ca-app-pub-3940256099942544/6300978111' : 'ca-app-pub-3940256099942544/2934735716';
+  } else if (Platform.isAndroid) {
+    return isTest ? 'ca-app-pub-3940256099942544/6300978111' : 'ca-app-pub-2791028683117450/7394675022';
+  }
+  return null;
+}
+
+String getInterstitialAdUnitId() {
+  if (Platform.isIOS) {
+    return 'ca-app-pub-3940256099942544/4411468910';
+  } else if (Platform.isAndroid) {
+    return 'ca-app-pub-3940256099942544/1033173712';
+  }
+  return null;
+}
+
+String getRewardBasedVideoAdUnitId() {
+  if (Platform.isIOS) {
+    return 'ca-app-pub-3940256099942544/1712485313';
+  } else if (Platform.isAndroid) {
+    return 'ca-app-pub-3940256099942544/5224354917';
+  }
+  return null;
 }
