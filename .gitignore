@@ -1,5 +1,7 @@
 pubspec.lock
 
+assets/admob/id.json
+
 # Miscellaneous
 *.class
 *.log

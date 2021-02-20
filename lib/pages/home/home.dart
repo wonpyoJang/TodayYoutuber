@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:TodayYoutuber/env/environment.dart';
 import 'package:admob_flutter/admob_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
@@ -88,7 +89,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   void initState() {
-
 
     bannerSize = AdmobBannerSize.BANNER;
 
@@ -424,23 +424,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           isLoading.add(false);
                         },
                       ),
-                    Container(
-                      color: Colors.yellow,
-                      child: AdmobBanner(
-                        adUnitId: getBannerAdUnitId(),
-                        adSize: bannerSize,
-                        listener: (AdmobAdEvent event,
-                            Map<String, dynamic> args) {
-                          handleEvent(event, args, 'Banner');
-                        },
-                        onBannerCreated:
-                            (AdmobBannerController controller) {
-                          // Dispose is called automatically for you when Flutter removes the banner from the widget tree.
-                          // Normally you don't need to worry about disposing this yourself, it's handled.
-                          // If you need direct access to dispose, this is your guy!
-                          // controller.dispose();
-                        },
-                      ),
+                    AdmobBanner(
+                      adUnitId: getBannerAdUnitId(),
+                      adSize: bannerSize,
+                      listener: (AdmobAdEvent event,
+                          Map<String, dynamic> args) {
+                        handleEvent(event, args, 'Banner');
+                      },
+                      onBannerCreated:
+                          (AdmobBannerController controller) {
+                        // Dispose is called automatically for you when Flutter removes the banner from the widget tree.
+                        // Normally you don't need to worry about disposing this yourself, it's handled.
+                        // If you need direct access to dispose, this is your guy!
+                        // controller.dispose();
+                      },
                     ),
                   ],
                 );
@@ -692,11 +689,10 @@ class _BlickingBorderButtonState extends State<BlickingBorderButton>
 }
 
 String getBannerAdUnitId({bool isTest = true}) {
-  String testAdId = "ca-app-pub-3940256099942544/6300978111";
   if (Platform.isIOS) {
-    return isTest ? 'ca-app-pub-3940256099942544/6300978111' : 'ca-app-pub-3940256099942544/2934735716';
+    return isTest ? 'ca-app-pub-3940256099942544/6300978111' : '';
   } else if (Platform.isAndroid) {
-    return isTest ? 'ca-app-pub-3940256099942544/6300978111' : 'ca-app-pub-2791028683117450/7394675022';
+    return AdmobKey.bannerAdUnitId.android;
   }
   return null;
 }

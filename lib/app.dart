@@ -24,7 +24,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
     this._intentDataStreamSubscription =
         ReceiveSharingIntent.getTextStream().listen((String value) {
           if (value == null || value.isEmpty) return;
