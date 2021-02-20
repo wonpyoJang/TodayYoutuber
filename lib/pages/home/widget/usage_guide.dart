@@ -45,87 +45,92 @@ class _UsageGuideState extends State<UsageGuide>
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Column(
       children: [
-        Align(
-          alignment: Alignment.topCenter,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  height: MediaQuery.of(context).size.width * 0.8 * (640 / 551),
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          fit: BoxFit.fitWidth,
-                          image: NetworkImage(
-                              "https://wonpyojang.github.io/TubeShakerHosting/images/youtube_share_flutter.png")))),
-              SizedBox(height: 20),
-              GestureDetector(
-                  onTap: () async {
-                    if (Platform.isAndroid) {
-                      launch("https://www.youtube.com/");
-                    } else {}
-                  },
-                  child: BlickingBorderButton(
-                      title: "goToYoutube".tr().toString(),
-                      width: 200,
-                      height: 75)),
-            ],
-          ),
-        ),
-        Align(
-          alignment: Alignment.topCenter,
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.8,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: 260,
-                    color: Colors.black.withOpacity(0.3)),
-                Row(
+        SizedBox(height: 30),
+        Stack(
+          children: [
+            Align(
+              alignment: Alignment.topCenter,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      height: MediaQuery.of(context).size.width * 0.8 * (640 / 551),
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              fit: BoxFit.fitWidth,
+                              image: NetworkImage(
+                                  "https://wonpyojang.github.io/TubeShakerHosting/images/youtube_share_flutter.png")))),
+                  SizedBox(height: 20),
+                  GestureDetector(
+                      onTap: () async {
+                        if (Platform.isAndroid) {
+                          launch("https://www.youtube.com/");
+                        } else {}
+                      },
+                      child: BlickingBorderButton(
+                          title: "goToYoutube".tr().toString(),
+                          width: 200,
+                          height: 75)),
+                ],
+              ),
+            ),
+            Align(
+              alignment: Alignment.topCenter,
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.8,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                        width: MediaQuery.of(context).size.width * 0.3,
-                        height: 50,
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        height: 260,
                         color: Colors.black.withOpacity(0.3)),
-                    Expanded(child: Container()),
+                    Row(
+                      children: [
+                        Container(
+                            width: MediaQuery.of(context).size.width * 0.3,
+                            height: 50,
+                            color: Colors.black.withOpacity(0.3)),
+                        Expanded(child: Container()),
+                        Container(
+                            width: MediaQuery.of(context).size.width * 0.3,
+                            height: 50,
+                            color: Colors.black.withOpacity(0.3))
+                      ],
+                    ),
                     Container(
-                        width: MediaQuery.of(context).size.width * 0.3,
-                        height: 50,
-                        color: Colors.black.withOpacity(0.3))
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        height: 80,
+                        color: Colors.black.withOpacity(0.3)),
                   ],
                 ),
-                Container(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: 80,
-                    color: Colors.black.withOpacity(0.3)),
-              ],
+              ),
             ),
-          ),
-        ),
-        FadeTransition(
-          opacity: _resizableController,
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(height: 200),
-                Align(
-                    alignment: Alignment.center,
-                    child: Icon(
-                      Icons.arrow_downward_rounded,
-                      size: 40,
-                      color: Colors.pink,
-                    )),
-              ],
+            FadeTransition(
+              opacity: _resizableController,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(height: 200),
+                    Align(
+                        alignment: Alignment.center,
+                        child: Icon(
+                          Icons.arrow_downward_rounded,
+                          size: 40,
+                          color: Colors.pink,
+                        )),
+                  ],
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ],
     );
