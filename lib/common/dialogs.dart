@@ -67,9 +67,9 @@ Future<void> showSelectFromCategories(
                         onSubmit();
                       },
                       child: Container(
-                          color: Colors.red,
-                          height: 44,
-                          width: 44,
+                          color: Colors.pink[200],
+                          height: 50,
+                          width: 70,
                           child: Center(child: Text("submit".tr().toString()))),
                     ),
                   ],

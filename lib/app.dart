@@ -24,6 +24,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    precacheImage(NetworkImage(
+        "https://wonpyojang.github.io/TubeShakerHosting/images/youtube_share_flutter.png"), context);
     super.initState();
     this._intentDataStreamSubscription =
         ReceiveSharingIntent.getTextStream().listen((String value) {
