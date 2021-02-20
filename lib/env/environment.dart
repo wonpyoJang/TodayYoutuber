@@ -6,10 +6,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:admob_flutter/admob_flutter.dart';
 
-enum BuildType {
-  development,
-  production
-}
+enum BuildType { development, production }
 
 class Environment {
   static Environment _instance;
@@ -20,11 +17,18 @@ class Environment {
 
   static BuildType get buildType => instance._buildType;
 
-  static String get apiUrl => instance._buildType == BuildType.development ? "https://dev.your-domain.com" : 'https://prod.your-domain.com';
+  static String get apiUrl => instance._buildType == BuildType.development
+      ? "https://dev.your-domain.com"
+      : 'https://prod.your-domain.com';
 
-  static String get dynamicLinkUrl => instance._buildType == BuildType.development ? "https://todayyoutubedev.page.link" : "https://todayyoutube.page.link";
+  static String get dynamicLinkUrl =>
+      instance._buildType == BuildType.development
+          ? "https://todayyoutubedev.page.link"
+          : "https://todayyoutube.page.link";
 
-  static String get packageName => instance._buildType == BuildType.development ? "com.example.TodayYoutuber.dev" : "com.example.TodayYoutuber";
+  static String get packageName => instance._buildType == BuildType.development
+      ? "com.example.TodayYoutuber.dev"
+      : "com.example.TodayYoutuber";
 
   const Environment._internal(this._buildType);
 

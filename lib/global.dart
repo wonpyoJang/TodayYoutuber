@@ -1,4 +1,3 @@
-
 import 'package:TodayYoutuber/app.dart';
 import 'package:TodayYoutuber/database/database.dart';
 import 'package:flutter/material.dart';
@@ -31,4 +30,3 @@ void main() {
       fallbackLocale: Locale('en', 'US'),
       child: MyApp()));
 }
-

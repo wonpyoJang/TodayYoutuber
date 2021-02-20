@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:easy_localization/easy_localization.dart';
+
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
@@ -26,13 +27,13 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     this._intentDataStreamSubscription =
         ReceiveSharingIntent.getTextStream().listen((String value) {
-          if (value == null || value.isEmpty) return;
-          isLoading.add(true);
-          print("url listend");
-          urlReceivedEvent.add(value);
-        }, onError: (err) {
-          logger.d("getLinkStream error: $err");
-        });
+      if (value == null || value.isEmpty) return;
+      isLoading.add(true);
+      print("url listend");
+      urlReceivedEvent.add(value);
+    }, onError: (err) {
+      logger.d("getLinkStream error: $err");
+    });
   }
 
   @override

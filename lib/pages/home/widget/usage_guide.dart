@@ -13,7 +13,8 @@ class UsageGuide extends StatefulWidget {
   _UsageGuideState createState() => _UsageGuideState();
 }
 
-class _UsageGuideState extends State<UsageGuide> with SingleTickerProviderStateMixin {
+class _UsageGuideState extends State<UsageGuide>
+    with SingleTickerProviderStateMixin {
   AnimationController _resizableController;
 
   @override

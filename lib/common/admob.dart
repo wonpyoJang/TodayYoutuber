@@ -19,28 +19,25 @@ class AdmobManager {
     String result;
     var parsed;
 
-    try{
+    try {
       if (false == isTest) {
         result = await rootBundle.loadString('assets/admob/id.json');
         parsed = json.decode(result);
       }
-    } catch(_) {
+    } catch (_) {}
 
-    }
-
-    if(isTest) {
-      bannerAdUnitId = AdmobKey(android:
-      'ca-app-pub-3940256099942544/6300978111');
+    if (isTest) {
+      bannerAdUnitId =
+          AdmobKey(android: 'ca-app-pub-3940256099942544/6300978111');
     } else {
-      bannerAdUnitId = AdmobKey(android: parsed["BannerAdUnitId"]["android"]
-      );
+      bannerAdUnitId = AdmobKey(android: parsed["BannerAdUnitId"]["android"]);
     }
 
     return;
   }
 
-  static void handleEvent(
-      GlobalKey<ScaffoldState> scaffoldState, AdmobAdEvent event, Map<String, dynamic> args, String adType) {
+  static void handleEvent(GlobalKey<ScaffoldState> scaffoldState,
+      AdmobAdEvent event, Map<String, dynamic> args, String adType) {
     switch (event) {
       case AdmobAdEvent.loaded:
         showSnackBar(scaffoldState, 'New Admob $adType Ad loaded!');
@@ -81,7 +78,8 @@ class AdmobManager {
     }
   }
 
-  static void showSnackBar(GlobalKey<ScaffoldState> scaffoldState, String content) {
+  static void showSnackBar(
+      GlobalKey<ScaffoldState> scaffoldState, String content) {
     scaffoldState.currentState.showSnackBar(
       SnackBar(
         content: Text(content),
@@ -117,4 +115,3 @@ class AdmobManager {
     return null;
   }
 }
-

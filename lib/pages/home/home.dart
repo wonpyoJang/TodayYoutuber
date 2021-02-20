@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     super.initState();
     logger.d("[initState] HomeScreen");
     HomeViewModel _homeViewModel =
-    Provider.of<HomeViewModel>(context, listen: false);
+        Provider.of<HomeViewModel>(context, listen: false);
     initialize(_homeViewModel);
     subscribeEvent(_homeViewModel);
     this.getDatasFromDB(context);
@@ -68,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Widget buildAppBar(BuildContext context) {
     HomeViewModel _homeViewModel =
-    Provider.of<HomeViewModel>(context, listen: true);
+        Provider.of<HomeViewModel>(context, listen: true);
     List<Category> categories = _homeViewModel.categories;
 
     return AppBar(
@@ -123,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               isLoading.add(true);
 
               var shareItemViewModel =
-              Provider.of<SelectShareItemViewModel>(context, listen: false);
+                  Provider.of<SelectShareItemViewModel>(context, listen: false);
 
               shareItemViewModel.categories = categories;
 
@@ -152,7 +152,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Widget buildBody(BuildContext context) {
     HomeViewModel _homeViewModel =
-    Provider.of<HomeViewModel>(context, listen: true);
+        Provider.of<HomeViewModel>(context, listen: true);
     List<Category> categories = _homeViewModel.categories;
 
     return LoadingOverlay(
@@ -165,37 +165,37 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             return category.lengthOfChannel < 1
                 ? UsageGuide()
                 : Column(
-              children: [
-                ChannelList(
-                  category: category,
-                  onTapDeleteButton: (channelIndex) async {
-                    isLoading.add(true);
-                    var result = await _homeViewModel.deleteChannel(
-                        categoryIndex, category.channels[channelIndex]);
+                    children: [
+                      ChannelList(
+                        category: category,
+                        onTapDeleteButton: (channelIndex) async {
+                          isLoading.add(true);
+                          var result = await _homeViewModel.deleteChannel(
+                              categoryIndex, category.channels[channelIndex]);
 
-                    if (result == DBAccessResult.FAIL) {
-                      showDBConnectionFailDailog(context);
-                    }
-                    isLoading.add(false);
-                  },
-                ),
-                AdmobBanner(
-                  adUnitId: AdmobManager.getBannerAdUnitId(),
-                  adSize: bannerSize,
-                  listener: (AdmobAdEvent event,
-                      Map<String, dynamic> args) {
-                    AdmobManager.handleEvent(scaffoldState, event, args, 'Banner');
-                  },
-                  onBannerCreated:
-                      (AdmobBannerController controller) {
-                    // Dispose is called automatically for you when Flutter removes the banner from the widget tree.
-                    // Normally you don't need to worry about disposing this yourself, it's handled.
-                    // If you need direct access to dispose, this is your guy!
-                    // controller.dispose();
-                  },
-                ),
-              ],
-            );
+                          if (result == DBAccessResult.FAIL) {
+                            showDBConnectionFailDailog(context);
+                          }
+                          isLoading.add(false);
+                        },
+                      ),
+                      AdmobBanner(
+                        adUnitId: AdmobManager.getBannerAdUnitId(),
+                        adSize: bannerSize,
+                        listener:
+                            (AdmobAdEvent event, Map<String, dynamic> args) {
+                          AdmobManager.handleEvent(
+                              scaffoldState, event, args, 'Banner');
+                        },
+                        onBannerCreated: (AdmobBannerController controller) {
+                          // Dispose is called automatically for you when Flutter removes the banner from the widget tree.
+                          // Normally you don't need to worry about disposing this yourself, it's handled.
+                          // If you need direct access to dispose, this is your guy!
+                          // controller.dispose();
+                        },
+                      ),
+                    ],
+                  );
           }),
           Center(
               child: InkWell(
@@ -221,7 +221,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   void getDatasFromDB(BuildContext context) async {
     HomeViewModel _homeViewModel =
-    Provider.of<HomeViewModel>(context, listen: false);
+        Provider.of<HomeViewModel>(context, listen: false);
     List<Category> categories = _homeViewModel.categories;
 
     _homeViewModel.clear();
@@ -241,50 +241,50 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   void subscribeDynamicLink(BuildContext context) async {
     var receviedChannelsViewModel =
-    Provider.of<ReceivedChannelsViewModel>(context, listen: false);
+        Provider.of<ReceivedChannelsViewModel>(context, listen: false);
 
     FirebaseDynamicLinks.instance.onLink(
         onSuccess: (PendingDynamicLinkData dynamicLink) async {
-          isLoading.add(true);
+      isLoading.add(true);
 
-          final Uri deepLink = dynamicLink?.link;
+      final Uri deepLink = dynamicLink?.link;
 
-          if (deepLink != null) {
-            DataSnapshot sharedData = await databaseReference
-                .child(deepLink.queryParameters["shareKey"])
-                .once();
+      if (deepLink != null) {
+        DataSnapshot sharedData = await databaseReference
+            .child(deepLink.queryParameters["shareKey"])
+            .once();
 
-            var json = sharedData.value.cast<String, dynamic>();
-            json['user'] = json['user'].cast<String, dynamic>();
-            json['categories'] = json['categories']
-                .map((category) => category.cast<String, dynamic>())
-                .toList();
+        var json = sharedData.value.cast<String, dynamic>();
+        json['user'] = json['user'].cast<String, dynamic>();
+        json['categories'] = json['categories']
+            .map((category) => category.cast<String, dynamic>())
+            .toList();
 
-            for (int i = 0; i < json['categories'].length; ++i) {
-              json['categories'][i]['channels'] = json['categories'][i]['channels']
-                  .map((channel) => channel.cast<String, dynamic>())
-                  .toList();
-            }
+        for (int i = 0; i < json['categories'].length; ++i) {
+          json['categories'][i]['channels'] = json['categories'][i]['channels']
+              .map((channel) => channel.cast<String, dynamic>())
+              .toList();
+        }
 
-            var sharedEvent =
+        var sharedEvent =
             ShareEvent.fromJson(sharedData.value.cast<String, dynamic>());
 
-            receviedChannelsViewModel.sharedEvent = sharedEvent;
+        receviedChannelsViewModel.sharedEvent = sharedEvent;
 
-            receviedChannelsViewModel.setSeletedTrue();
+        receviedChannelsViewModel.setSeletedTrue();
 
-            isLoading.add(false);
+        isLoading.add(false);
 
-            Navigator.pushNamed(context, RouteLists.receivedChannels,
-                arguments: ReceivedChannelsArgument(sharedEvent: sharedEvent));
-          }
-        }, onError: (OnLinkErrorException e) async {
+        Navigator.pushNamed(context, RouteLists.receivedChannels,
+            arguments: ReceivedChannelsArgument(sharedEvent: sharedEvent));
+      }
+    }, onError: (OnLinkErrorException e) async {
       print('onLinkError');
       print(e.message);
     });
 
     final PendingDynamicLinkData data =
-    await FirebaseDynamicLinks.instance.getInitialLink();
+        await FirebaseDynamicLinks.instance.getInitialLink();
     final Uri deepLink = data?.link;
 
     if (deepLink != null) {
@@ -307,7 +307,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       }
 
       var sharedEvent =
-      ShareEvent.fromJson(sharedData.value.cast<String, dynamic>());
+          ShareEvent.fromJson(sharedData.value.cast<String, dynamic>());
 
       receviedChannelsViewModel.sharedEvent = sharedEvent;
 
@@ -329,7 +329,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           // todo : 이 부분은 getUrlWhenStartedBySharingINtent에 들어가는 콜백에서 중복된다.
           DBAccessResult result = await _homeViewModel.addChannel(
               selectedCategoryIndex, parsedChannel);
-    
+
           if (result == DBAccessResult.DUPLICATED_CHANNEL) {
             await showDuplicatedChannelDailog(context);
             return;
@@ -341,13 +341,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         _tabController.animateTo(selectedCategoryIndex);
       });
     });
-    
+
     _homeViewModel.getUrlWhenStartedBySharingIntent((url) async {
       int selectedCategoryIndex = await showModalBttomSheetForAddingChanel(
           context, url, (selectedCategoryIndex, parsedChannel) async {
         DBAccessResult result = await _homeViewModel.addChannel(
             selectedCategoryIndex, parsedChannel);
-    
+
         if (result == DBAccessResult.DUPLICATED_CHANNEL) {
           await showDuplicatedChannelDailog(context);
           return;
@@ -360,7 +360,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     });
   }
 
-  Future<void> onPressedCategoryMenu(BuildContext context, int categoryIndex) async {
+  Future<void> onPressedCategoryMenu(
+      BuildContext context, int categoryIndex) async {
     HomeViewModel _homeViewModel =
         Provider.of<HomeViewModel>(context, listen: false);
     List<Category> categories = _homeViewModel.categories;
@@ -397,7 +398,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Future<void> addNewCategory(BuildContext context) async {
     HomeViewModel _homeViewModel =
-    Provider.of<HomeViewModel>(context, listen: false);
+        Provider.of<HomeViewModel>(context, listen: false);
     List<Category> categories = _homeViewModel.categories;
 
     String newCategoryTitle = await showTextFieldDialog(context,
@@ -421,10 +422,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     setState(() {
       _tabController =
-      new TabController(vsync: this, length: categories.length + 1);
+          new TabController(vsync: this, length: categories.length + 1);
     });
   }
-
-
 }
-
