@@ -24,11 +24,11 @@ class Environment {
   static String get dynamicLinkUrl =>
       instance._buildType == BuildType.development
           ? "https://todayyoutubedev.page.link"
-          : "https://todayyoutube.page.link";
+          : "https://tubeshaker.page.link";
 
   static String get packageName => instance._buildType == BuildType.development
-      ? "com.example.TodayYoutuber.dev"
-      : "com.example.TodayYoutuber";
+      ? "com.pinkbori.TubeShaker.dev"
+      : "com.pinkbori.TubeShaker";
 
   const Environment._internal(this._buildType);
 

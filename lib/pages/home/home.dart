@@ -324,6 +324,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     urlReceivedEvent.stream.listen((url) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
         isLoading.add(false);
+
+        if(_homeViewModel.categories.length < 1) {
+
+          final snackBar = SnackBar(
+              content: Text('noCategoryError'.tr().toString()));
+          Scaffold.of(context).showSnackBar(snackBar);
+          return;
+        }
+
         int selectedCategoryIndex = await showModalBttomSheetForAddingChanel(
             context, url, (selectedCategoryIndex, parsedChannel) async {
           // todo : 이 부분은 getUrlWhenStartedBySharingINtent에 들어가는 콜백에서 중복된다.

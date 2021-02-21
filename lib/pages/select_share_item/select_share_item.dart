@@ -106,7 +106,7 @@ class _SelectShareItemScreenState extends State<SelectShareItemScreen> {
                 minimumVersion: 1,
               ),
               iosParameters: IosParameters(
-                bundleId: 'com.example.TodayYoutuber',
+                bundleId: 'com.pinkbori.TubeShaker',
                 minimumVersion: '1.0.1',
                 appStoreId: '123456789',
               ),

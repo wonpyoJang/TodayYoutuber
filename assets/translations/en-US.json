@@ -20,5 +20,7 @@
     "share" : "share",
     "addCategory" : "add category",
     "addCategoryDesc" : "Please enter new category name.",
-    "goToYoutube" : "go to youtube"
+    "goToYoutube" : "go to youtube",
+    "noCategoryError" : "Please add category before adding channels",
+    "menu" : "menu"
 }
