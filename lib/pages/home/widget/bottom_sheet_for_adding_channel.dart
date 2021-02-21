@@ -1,13 +1,11 @@
+import 'package:TodayYoutuber/pages/home/widget/channel_info_item.dart';
+import 'package:TodayYoutuber/pages/home/widget/selection_box.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
-import 'package:TodayYoutuber/common/dialogs.dart';
 import 'package:TodayYoutuber/global.dart';
-import 'package:TodayYoutuber/models/category.dart';
 import 'package:TodayYoutuber/models/channel.dart';
-import 'package:TodayYoutuber/pages/home/home_view_model.dart';
 import 'package:TodayYoutuber/pages/home/widget/channel_item.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -17,33 +15,34 @@ Future<int> showModalBttomSheetForAddingChanel(
   if (value == null) {
     return null;
   }
+
   Channel parsedChannel = await _parseChannelYoutbue(value);
   BehaviorSubject<int> selectedCategoryStream = BehaviorSubject<int>();
 
   await showModalBttomSheetBase(context,
       child: Container(
-        height: 400,
+        height: MediaQuery.of(context).size.height / 2,
         padding: EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(height: 20),
             Text("addChannel".tr().toString(), style: TextStyle(fontSize: 25)),
-            SizedBox(height: 10),
-            _TextField(tag: "url".tr().toString(), value: parsedChannel.link),
+            SizedBox(height: 20),
+            ChannelInfoItem(tag: "url".tr().toString(), value: parsedChannel.link),
             SizedBox(height: 15),
-            _TextField(
+            ChannelInfoItem(
                 tag: "channelName".tr().toString(), value: parsedChannel.name),
             SizedBox(height: 15),
-            _TextField(
+            ChannelInfoItem(
                 tag: "numberOfSubscribers".tr().toString(),
                 value: parsedChannel.subscribers),
             SizedBox(height: 10),
-            _SelectionBox(
+            SelectionBox(
                 tag: "category".tr().toString(),
                 selectedCategoryStream: selectedCategoryStream),
             SizedBox(height: 50),
-            _AddButton(
+            AddButton(
               onTapAddButton: () {
                 onTapAddButton(selectedCategoryStream.value, parsedChannel);
               },
@@ -195,7 +194,7 @@ class _ModalBottomSheetForReceivedChannelsScreenState
             SizeTransition(
               axisAlignment: 1.0,
               sizeFactor: newCategoryNameFieldAnimation,
-              child: _TextField(
+              child: ChannelInfoItem(
                 tag: "newCategory".tr().toString(),
                 value: "",
                 enableTextField: true,
@@ -206,12 +205,12 @@ class _ModalBottomSheetForReceivedChannelsScreenState
             SizeTransition(
               axisAlignment: 1.0,
               sizeFactor: categoryFieldAnimation,
-              child: _SelectionBox(
+              child: SelectionBox(
                   tag: "category".tr().toString(),
                   selectedCategoryStream: widget.selectedCategoryStream),
             ),
             SizedBox(height: 50),
-            _AddButton(
+            AddButton(
               onTapAddButton: () {},
             ),
           ],
@@ -242,8 +241,8 @@ Future<void> showModalBttomSheetBase(BuildContext context,
       });
 }
 
-class _AddButton extends StatelessWidget {
-  const _AddButton({Key key, @required this.onTapAddButton}) : super(key: key);
+class AddButton extends StatelessWidget {
+  const AddButton({Key key, @required this.onTapAddButton}) : super(key: key);
 
   final Function onTapAddButton;
 
@@ -258,146 +257,13 @@ class _AddButton extends StatelessWidget {
             width: 100,
             height: 44,
             decoration: BoxDecoration(
-                color: Colors.grey,
+                color: Colors.pink[100],
                 borderRadius: BorderRadius.all(Radius.circular(8)),
-                border: Border.all(width: 1, color: Colors.black)),
-            child: Center(child: Text("submit".tr().toString()))));
-  }
-}
-
-class _TextField extends StatelessWidget {
-  final String tag;
-  final String value;
-  final bool enableTextField;
-  final TextEditingController textEditingController;
-
-  const _TextField(
-      {Key key,
-      this.tag,
-      this.value,
-      this.enableTextField = false,
-      this.textEditingController})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Container(
-        child: Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(4),
-              height: 44,
-              width: 70,
-              alignment: Alignment.centerLeft,
-              child: Text(tag),
-              decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.all(Radius.circular(4)),
-                border: Border.all(width: 1, color: Colors.black),
-              ),
-            ),
-            SizedBox(width: 10),
-            Expanded(
-              child: Stack(
-                children: [
-                  Container(
-                      height: 44,
-                      padding: EdgeInsets.all(4),
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        value,
-                        maxLines: 3,
-                      ),
-                      decoration: BoxDecoration(
-                          color: Colors.grey,
-                          borderRadius: BorderRadius.all(Radius.circular(4)),
-                          border: Border.all(width: 1, color: Colors.black))),
-                  if (enableTextField)
-                    TextField(
-                      controller: textEditingController,
-                    )
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SelectionBox extends StatefulWidget {
-  final String tag;
-  final BehaviorSubject<int> selectedCategoryStream;
-
-  _SelectionBox({Key key, this.tag, this.selectedCategoryStream})
-      : super(key: key);
-
-  @override
-  __SelectionBoxState createState() => __SelectionBoxState();
-}
-
-class __SelectionBoxState extends State<_SelectionBox> {
-  String value = "selection".tr().toString();
-
-  @override
-  Widget build(BuildContext context) {
-    HomeViewModel _homeViewModel = Provider.of(context, listen: false);
-    List<Category> categories = _homeViewModel.categories;
-
-    return GestureDetector(
-      onTap: () async {
-        // 초기값
-        value = categories[0].title;
-        widget.selectedCategoryStream.add(0);
-        setState(() {});
-
-        await showSelectFromCategories(context, categories,
-            onSelect: (category) {
-          value = category.title;
-          widget.selectedCategoryStream.add(categories.indexOf(category));
-          setState(() {});
-        }, onSubmit: () {
-          Navigator.of(context).pop();
-        });
-      },
-      child: Container(
-        child: Container(
-          child: Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(4),
-                height: 44,
-                width: 70,
-                alignment: Alignment.centerLeft,
-                child: Text(widget.tag),
-                decoration: BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius: BorderRadius.all(Radius.circular(4)),
-                  border: Border.all(width: 1, color: Colors.black),
-                ),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: Container(
-                    height: 44,
-                    padding: EdgeInsets.all(4),
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      value,
-                      maxLines: 3,
-                    ),
-                    decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.all(Radius.circular(4)),
-                        border: Border.all(width: 1, color: Colors.black))),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+                border: Border.all(width: 1, color: Colors.pink[300])),
+            child: Center(
+                child: Text("submit".tr().toString(),
+                    style: TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.bold)))));
   }
 }
 

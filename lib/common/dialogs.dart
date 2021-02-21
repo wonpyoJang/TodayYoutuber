@@ -67,9 +67,9 @@ Future<void> showSelectFromCategories(
                         onSubmit();
                       },
                       child: Container(
-                          color: Colors.red,
-                          height: 44,
-                          width: 44,
+                          color: Colors.pink[200],
+                          height: 50,
+                          width: 70,
                           child: Center(child: Text("submit".tr().toString()))),
                     ),
                   ],
@@ -97,7 +97,7 @@ Future<void> showSelectFromCategories(
 
 Future<void> showCategoryMenu(BuildContext context,
     {Function onPressedEdit, Function onPressedDelete}) async {
-  await showCupertinoSelectionMenu(context, "메뉴", [
+  await showCupertinoSelectionMenu(context, "메뉴".tr(), [
     CupertinoActionSheetAction(
         onPressed: () async {
           await onPressedEdit();

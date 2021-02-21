@@ -7,6 +7,7 @@
     "delete" : "삭제",
     "cancel" : "취소",
     "add" : "+추가하기",
+    "add2" : "추가",
     "addChannel" : "채널 추가하기",
     "url" : "url",
     "channelName" : "채널명",
@@ -20,5 +21,7 @@
     "share" : "공유하기",
     "addCategory" : "카테고리 추가",
     "addCategoryDesc" : "새 카테고리 명을 입력해 주세요",
-    "goToYoutube" : "유튜브 바로가기"
+    "goToYoutube" : "유튜브 바로가기",
+    "noCategoryError" : "카테고리를 먼저 등록해 주세요",
+    "menu" : "메뉴"
 }

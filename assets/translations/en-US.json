@@ -7,6 +7,7 @@
     "delete" : "delete",
     "cancel" : "cancel",
     "add" : "+add",
+    "add2" : "add",
     "addChannel" : "Adding Channel",
     "url" : "url",
     "channelName" : "channel name",
@@ -20,5 +21,7 @@
     "share" : "share",
     "addCategory" : "add category",
     "addCategoryDesc" : "Please enter new category name.",
-    "goToYoutube" : "go to youtube"
+    "goToYoutube" : "go to youtube",
+    "noCategoryError" : "Please add category before adding channels",
+    "menu" : "menu"
 }
