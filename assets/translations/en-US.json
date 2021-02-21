@@ -7,6 +7,7 @@
     "delete" : "delete",
     "cancel" : "cancel",
     "add" : "+add",
+    "add2" : "add",
     "addChannel" : "Adding Channel",
     "url" : "url",
     "channelName" : "channel name",

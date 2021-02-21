@@ -116,6 +116,9 @@ class _ReceivedChannelsScreenState extends State<ReceivedChannelsScreen> {
                       final newCategory = Category(
                           title: results.newCategoryName, channels: []);
                       await homeViewModel.addCategory(newCategory);
+                      setState(() {
+
+                      });
                     }
 
                     for (var category in categories) {
@@ -135,7 +138,7 @@ class _ReceivedChannelsScreenState extends State<ReceivedChannelsScreen> {
                     color: Colors.green[200],
                     child: Center(
                       child: Text(
-                          "추가 (${receivedChannelListViewModel.numberOfSelectedItem()})"),
+                          "add2".tr() + " (${receivedChannelListViewModel.numberOfSelectedItem()})"),
                     ),
                   ),
                 );
