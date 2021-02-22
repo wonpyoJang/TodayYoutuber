@@ -97,7 +97,7 @@ Future<void> showSelectFromCategories(
 
 Future<void> showCategoryMenu(BuildContext context,
     {Function onPressedEdit, Function onPressedDelete}) async {
-  await showCupertinoSelectionMenu(context, "메뉴".tr(), [
+  await showCupertinoSelectionMenu(context, "menu".tr(), [
     CupertinoActionSheetAction(
         onPressed: () async {
           await onPressedEdit();
