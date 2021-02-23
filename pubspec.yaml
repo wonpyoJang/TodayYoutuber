@@ -35,7 +35,8 @@ dependencies:
   fab_circular_menu: ^1.0.1
   flutter_slidable: ^0.5.7
   url_launcher: ^5.7.10
-  easy_localization: 
+  easy_localization:
+  firebase_crashlytics:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:TodayYoutuber/app.dart';
 import 'package:TodayYoutuber/common/admob.dart';
 import 'package:TodayYoutuber/database/database.dart';
@@ -5,6 +7,7 @@ import 'package:TodayYoutuber/global.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:admob_flutter/admob_flutter.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 enum BuildType { development, production }
 
@@ -47,10 +50,16 @@ class Environment {
     Admob.initialize();
     await AdmobManager.loadAdmobKey(isTest: true);
     database = MyDatabase();
-    runApp(EasyLocalization(
-        supportedLocales: [Locale('en', 'US'), Locale('ko', 'KR')],
-        path: 'assets/translations',
-        fallbackLocale: Locale('en', 'US'),
-        child: MyApp()));
+
+    runZonedGuarded(() {
+      runApp(EasyLocalization(
+          supportedLocales: [Locale('en', 'US'), Locale('ko', 'KR')],
+          path: 'assets/translations',
+          fallbackLocale: Locale('en', 'US'),
+          child: MyApp()));
+    }, (error, stackTrace) {
+      print('runZonedGuarded: Caught error in my root zone.');
+      FirebaseCrashlytics.instance.recordError(error, stackTrace);
+    });
   }
 }
