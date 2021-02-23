@@ -8,51 +8,7 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1019315322511:android:7c3c93b05c72f76b22fafa",
-        "android_client_info": {
-          "package_name": "com.example.TodayYoutuber.dev"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "1019315322511-uaihcr58td0veerqn71g4ssmj98lp0ga.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.TodayYoutuber.dev",
-            "certificate_hash": "4c23d176b7fc4cbd717af929edb2ac41b9fa7e00"
-          }
-        },
-        {
-          "client_id": "1019315322511-v9d9ghjgrr5tpq0frm1gb5jmgotb2ksb.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyAmahu0w1Im8Q8LbZ1nZOCjm4Oxz5mtB4Y"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1019315322511-v9d9ghjgrr5tpq0frm1gb5jmgotb2ksb.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "1019315322511-7b2bpj6cbfm3j1ao49k9544e8bo6260i.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.gmail.TodayYoutuberDev"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:1019315322511:android:1adf55ac02836cd622fafa",
+        "mobilesdk_app_id": "1:1019315322511:android:69a48ce8540069e822fafa",
         "android_client_info": {
           "package_name": "com.pinkbori.TubeShaker.dev"
         }

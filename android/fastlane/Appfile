@@ -1,0 +1,2 @@
+json_key_file("/Users/jang-wonpyo/workplace/study/stard/TodayYoutuber/android/pc-api-7819742904909528380-514-ba8f870c3619.json") # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
+package_name("com.pinkbori.TubeShaker") # e.g. com.krausefx.app

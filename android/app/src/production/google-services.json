@@ -8,43 +8,7 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:801180954633:android:5180b98116814bd51348d8",
-        "android_client_info": {
-          "package_name": "com.example.TodayYoutuber"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "801180954633-60k9f9n67jn0u9hbn2el6l0juipcsqlf.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDxEC8KP3bS8TC3-Q9RlD4WE6bKkKjhEuM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "801180954633-60k9f9n67jn0u9hbn2el6l0juipcsqlf.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "801180954633-22huoe3ih43eh16fuvi8vjo0ul4jnfdh.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.gmail.TodayYoutuber"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:801180954633:android:b8b4d0baec2d7eec1348d8",
+        "mobilesdk_app_id": "1:801180954633:android:68665c18bbcb59c01348d8",
         "android_client_info": {
           "package_name": "com.pinkbori.TubeShaker"
         }

@@ -1,0 +1,83 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Increase version from pubspec.yaml"
+  lane :increase_version do
+      yaml_file_path = "../../pubspec.yaml"
+      data = YAML.load_file(yaml_file_path)
+      version = data["version"]
+
+      # to_i는 to_integer를 의미하는 ruby 함수.
+      major = data["version"].split(".")[0].to_i
+      minor = data["version"].split(".")[1].to_i
+      patch = data["version"].split(".")[2].to_i
+      build = data["version"].split("+")[1].to_i
+      new_build = build + 1
+      new_version = "#{major}.#{minor}.#{patch}+#{new_build}"
+
+      data["version"] = new_version
+      File.open(yaml_file_path, 'w') { |f| YAML.dump(data, f) }
+  end
+
+  desc "Runs all the tests"
+  lane :test do
+    gradle(task: "test")
+  end
+
+  desc "Submit a new Beta Build to Crashlytics Beta"
+  lane :beta do
+    gradle(task: "clean assembleRelease")
+    crashlytics
+  
+    # sh "your_script.sh"
+    # You can also use other beta testing services here
+  end
+
+  desc "Deploy a new version to the Firebase"
+  lane :firebase_dev do
+    increase_version
+    sh "flutter build apk --flavor development -t lib/env/development.dart"
+    firebase_app_distribution(
+        app: "1:1019315322511:android:69a48ce8540069e822fafa",
+        testers: "jangwonpyo0@gmail.com",
+        release_notes: "Test",
+        firebase_cli_path: "/usr/local/bin/firebase",
+        apk_path: "../build/app/outputs/apk/development/release/app-development-release.apk"
+    )
+  end
+
+  desc "Deploy a new version to the Firebase"
+  lane :firebase_prod do
+    increase_version
+    sh "flutter build apk --flavor production -t lib/env/production.dart"
+    firebase_app_distribution(
+        app: "1:801180954633:android:68665c18bbcb59c01348d8",
+        testers: "jangwonpyo0@gmail.com",
+        release_notes: "Test",
+        firebase_cli_path: "/usr/local/bin/firebase",
+        apk_path: "../build/app/outputs/apk/production/release/app-production-release.apk"
+    )
+  end
+
+  desc "Deploy a new version to the Google Play"
+  lane :deploy do
+    increase_version
+    sh "flutter build appbundle --flavor production -t lib/env/production.dart"
+    upload_to_play_store(aab: "../build/app/outputs/bundle/productionRelease/app-production-release.aab")
+  end
+end

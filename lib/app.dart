@@ -12,6 +12,10 @@ import 'package:provider/provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:easy_localization/easy_localization.dart';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
+
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
@@ -21,9 +25,12 @@ class _MyAppState extends State<MyApp> {
   // ignore: unused_field
   // ignore: cancel_subscriptions
   StreamSubscription _intentDataStreamSubscription;
+  // ignore: unused_field
+  Future<void> _initializeFlutterFireFuture;
 
   @override
   void initState() {
+    _initializeFlutterFireFuture = _initializeFlutterFire();
     precacheImage(NetworkImage(
         "https://wonpyojang.github.io/TubeShakerHosting/images/youtube_share_flutter.png"), context);
     super.initState();
@@ -36,6 +43,22 @@ class _MyAppState extends State<MyApp> {
     }, onError: (err) {
       logger.d("getLinkStream error: $err");
     });
+  }
+
+  // Define an async function to initialize FlutterFire
+  Future<void> _initializeFlutterFire() async {
+    // Wait for Firebase to initialize
+    await Firebase.initializeApp();
+
+    await FirebaseCrashlytics.instance
+          .setCrashlyticsCollectionEnabled(!kDebugMode);
+    // Pass all uncaught errors to Crashlytics.
+    Function originalOnError = FlutterError.onError;
+    FlutterError.onError = (FlutterErrorDetails errorDetails) async {
+      await FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
+      // Forward to original handler.
+      originalOnError(errorDetails);
+    };
   }
 
   @override
