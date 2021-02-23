@@ -31,6 +31,16 @@ Runs all the tests
 fastlane android beta
 ```
 Submit a new Beta Build to Crashlytics Beta
+### android firebase_dev
+```
+fastlane android firebase_dev
+```
+Deploy a new version to the Firebase
+### android firebase_prod
+```
+fastlane android firebase_prod
+```
+Deploy a new version to the Firebase
 ### android deploy
 ```
 fastlane android deploy

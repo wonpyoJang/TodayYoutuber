@@ -48,10 +48,36 @@ platform :android do
     # You can also use other beta testing services here
   end
 
+  desc "Deploy a new version to the Firebase"
+  lane :firebase_dev do
+    increase_version
+    sh "flutter build apk --flavor development -t lib/env/development.dart"
+    firebase_app_distribution(
+        app: "1:1019315322511:android:69a48ce8540069e822fafa",
+        testers: "jangwonpyo0@gmail.com",
+        release_notes: "Test",
+        firebase_cli_path: "/usr/local/bin/firebase",
+        apk_path: "../build/app/outputs/apk/development/release/app-development-release.apk"
+    )
+  end
+
+  desc "Deploy a new version to the Firebase"
+  lane :firebase_prod do
+    increase_version
+    sh "flutter build apk --flavor production -t lib/env/production.dart"
+    firebase_app_distribution(
+        app: "1:801180954633:android:68665c18bbcb59c01348d8",
+        testers: "jangwonpyo0@gmail.com",
+        release_notes: "Test",
+        firebase_cli_path: "/usr/local/bin/firebase",
+        apk_path: "../build/app/outputs/apk/production/release/app-production-release.apk"
+    )
+  end
+
   desc "Deploy a new version to the Google Play"
   lane :deploy do
     increase_version
-    sh "flutter build appbundle --flavor production -t lib/env/development.dart"
+    sh "flutter build appbundle --flavor production -t lib/env/production.dart"
     upload_to_play_store(aab: "../build/app/outputs/bundle/productionRelease/app-production-release.aab")
   end
 end
