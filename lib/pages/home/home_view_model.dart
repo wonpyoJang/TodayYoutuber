@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:TodayYoutuber/global.dart';
 // ignore: implementation_imports
-import 'package:sqlite3/src/api/exception.dart';
+import 'package:sqlite3/sqlite3.dart';
 
 enum DBAccessResult { SUCCESS, DUPLICATED_CATEGORY, DUPLICATED_CHANNEL, FAIL }
 

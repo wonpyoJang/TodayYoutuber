@@ -8,13 +8,23 @@
             "name": "debug",
             "request": "launch",
             "flutterMode": "debug",
-            "type": "dart"
+            "type": "dart",
+            "args": [
+                "--flavor",
+                "development"
+            ],
+            "program": "lib/env/development.dart"
         },
         {
-            "name": "relese",
+            "name": "release",
             "request": "launch",
             "flutterMode": "release",
-            "type": "dart"
+            "type": "dart",
+            "args": [
+                "--flavor",
+                "development"
+            ],
+            "program": "lib/env/development.dart"
         }
     ]
 }

@@ -1,8 +1,8 @@
 import 'package:moor/moor.dart';
-import 'package:moor/ffi.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'dart:io';
+import 'package:moor/ffi.dart';
 
 // assuming that your file is called filename.dart. This will give an error at first,
 // but it's needed for moor to know about the generated code

@@ -31,8 +31,10 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     _initializeFlutterFireFuture = _initializeFlutterFire();
-    precacheImage(NetworkImage(
-        "https://wonpyojang.github.io/TubeShakerHosting/images/youtube_share_flutter.png"), context);
+    precacheImage(
+        NetworkImage(
+            "https://wonpyojang.github.io/TubeShakerHosting/images/youtube_share_flutter.png"),
+        context);
     super.initState();
     this._intentDataStreamSubscription =
         ReceiveSharingIntent.getTextStream().listen((String value) {
@@ -51,7 +53,7 @@ class _MyAppState extends State<MyApp> {
     await Firebase.initializeApp();
 
     await FirebaseCrashlytics.instance
-          .setCrashlyticsCollectionEnabled(!kDebugMode);
+        .setCrashlyticsCollectionEnabled(!kDebugMode);
     // Pass all uncaught errors to Crashlytics.
     Function originalOnError = FlutterError.onError;
     FlutterError.onError = (FlutterErrorDetails errorDetails) async {
@@ -69,7 +71,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    logger.d("[build] MyApp");
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -87,9 +88,6 @@ class _MyAppState extends State<MyApp> {
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         onGenerateRoute: RouteManager.namesToScreen,
-        localizationsDelegates: context.localizationDelegates,
-        locale: context.locale,
-        supportedLocales: context.supportedLocales,
       ),
     );
   }
