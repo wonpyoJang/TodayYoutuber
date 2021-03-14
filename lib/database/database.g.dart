@@ -34,14 +34,6 @@ class Category extends DataClass implements Insertable<Category> {
     return map;
   }
 
-  CategoriesCompanion toCompanion(bool nullToAbsent) {
-    return CategoriesCompanion(
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      title:
-          title == null && nullToAbsent ? const Value.absent() : Value(title),
-    );
-  }
-
   factory Category.fromJson(Map<String, dynamic> json,
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
@@ -118,15 +110,6 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       map['title'] = Variable<String>(title.value);
     }
     return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('CategoriesCompanion(')
-          ..write('id: $id, ')
-          ..write('title: $title')
-          ..write(')'))
-        .toString();
   }
 }
 
@@ -259,26 +242,6 @@ class Channel extends DataClass implements Insertable<Channel> {
       map['category_id'] = Variable<int>(categoryId);
     }
     return map;
-  }
-
-  ChannelsCompanion toCompanion(bool nullToAbsent) {
-    return ChannelsCompanion(
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
-      image:
-          image == null && nullToAbsent ? const Value.absent() : Value(image),
-      link: link == null && nullToAbsent ? const Value.absent() : Value(link),
-      subscribers: subscribers == null && nullToAbsent
-          ? const Value.absent()
-          : Value(subscribers),
-      likes:
-          likes == null && nullToAbsent ? const Value.absent() : Value(likes),
-      isLike:
-          isLike == null && nullToAbsent ? const Value.absent() : Value(isLike),
-      categoryId: categoryId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(categoryId),
-    );
   }
 
   factory Channel.fromJson(Map<String, dynamic> json,
@@ -477,21 +440,6 @@ class ChannelsCompanion extends UpdateCompanion<Channel> {
       map['category_id'] = Variable<int>(categoryId.value);
     }
     return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('ChannelsCompanion(')
-          ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('image: $image, ')
-          ..write('link: $link, ')
-          ..write('subscribers: $subscribers, ')
-          ..write('likes: $likes, ')
-          ..write('isLike: $isLike, ')
-          ..write('categoryId: $categoryId')
-          ..write(')'))
-        .toString();
   }
 }
 
