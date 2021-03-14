@@ -13,3 +13,4 @@
 
 FLUTTER_TARGET=lib/env/production.dart
 BUNDLE_SUFFIX =
+BUNDLE_IDENTIFIER_BASE=com.gmail.TodayYoutuber
